@@ -1,14 +1,23 @@
 package org.example.emailprojectjavafx.models.Auth;
 
-public class AuthResponse {
-    private boolean ok;
-    private String result;
+import org.example.emailprojectjavafx.models.BaseResponse;
 
-    public boolean isOk() {
-        return ok;
-    }
+public class AuthResponse extends BaseResponse {
+    private String token;
 
     public String getToken() {
-        return result;
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthResponse{" +
+                "ok= " + isOk() +
+                ", token='" + token + '\'' +
+                '}';
     }
 }

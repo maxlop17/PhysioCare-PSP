@@ -83,11 +83,17 @@ public class ServiceUtils {
                 wr.flush();
                 wr.close();
             }
+            int responseCode = conn.getResponseCode();
 
             String charset = getCharset(conn.getHeaderField("Content-Type"));
 
             if (charset != null) {
-                InputStream input = conn.getInputStream();
+                InputStream input;
+                if(responseCode >= 200 && responseCode < 400)
+                    input = conn.getInputStream();
+                else {
+                    input = conn.getErrorStream();
+                }
                 if ("gzip".equals(conn.getContentEncoding())) {
                     input = new GZIPInputStream(input);
                 }

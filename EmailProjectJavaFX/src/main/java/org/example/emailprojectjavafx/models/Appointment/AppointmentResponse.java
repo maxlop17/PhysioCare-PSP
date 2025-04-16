@@ -5,9 +5,9 @@ import org.example.emailprojectjavafx.models.Patient.Patient;
 
 public class AppointmentResponse extends BaseResponse {
 
-    private Appointment result;
+    private Appointment resultado;
 
     public Appointment getAppointment() {
-        return result;
+        return resultado;
     }
 }

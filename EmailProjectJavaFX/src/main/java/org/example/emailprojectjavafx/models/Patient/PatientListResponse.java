@@ -7,10 +7,10 @@ import java.util.List;
 
 public class PatientListResponse extends BaseResponse {
 
-    private List<Patient> result;
+    private List<Patient> resultado;
 
     public List<Patient> getPatients() {
-        return result;
+        return resultado;
     }
 }
 

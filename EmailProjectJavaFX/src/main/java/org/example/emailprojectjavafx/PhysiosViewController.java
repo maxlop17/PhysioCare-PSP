@@ -78,12 +78,12 @@ public class PhysiosViewController implements Initializable {
                 .thenApply(json ->
                         gson.fromJson(json, PhysioListResponse.class)
                 ).thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         Platform.runLater(() ->
                                 lsPhysios.getItems().setAll(response.getPhysios())
                         );
                     } else {
-                        showAlert("Error", response.getErrorMessage(), 2);
+                        showAlert("Error", response.getError(), 2);
                     }
                 }).exceptionally(_ -> {
                     showAlert("Error", "Failed to fetch physios", 2);
@@ -142,7 +142,7 @@ public class PhysiosViewController implements Initializable {
         ServiceUtils.getResponseAsync(url, jsonRequest, "POST")
                 .thenApply(json -> gson.fromJson(json, PhysioResponse.class))
                 .thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         Platform.runLater(() -> {
                             showAlert("Physio added", response.getPhysio().getName() + " added", 1);
                             getPhysios();
@@ -151,7 +151,7 @@ public class PhysiosViewController implements Initializable {
                         });
                     } else {
                         Platform.runLater(() ->
-                                showAlert("Error creating physio", response.getErrorMessage(), 2)
+                                showAlert("Error creating physio", response.getError(), 2)
                         );
                     }
                 })
@@ -169,7 +169,7 @@ public class PhysiosViewController implements Initializable {
         ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
                 .thenApply(json -> gson.fromJson(json, PhysioResponse.class))
                 .thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (!response.isOk()) {
                         Platform.runLater(() -> {
                             showAlert("Physio updated", response.getPhysio().getName() + " updated", 1);
                             getPhysios();
@@ -178,7 +178,7 @@ public class PhysiosViewController implements Initializable {
                         });
                     } else {
                         Platform.runLater(() ->
-                                showAlert("Error modifying physio", response.getErrorMessage(), 2)
+                                showAlert("Error modifying physio", response.getError(), 2)
                         );
                     }
 
@@ -197,7 +197,7 @@ public class PhysiosViewController implements Initializable {
         ServiceUtils.getResponseAsync(url, jsonRequest, "DELETE")
                 .thenApply(json -> gson.fromJson(json, PhysioResponse.class))
                 .thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         Platform.runLater(() -> {
                             showAlert("Physio deleted", response.getPhysio().getName() + " deleted", 1);
                             getPhysios();
@@ -205,7 +205,7 @@ public class PhysiosViewController implements Initializable {
                             clearFields();
                         });
                     } else {
-                        Platform.runLater(() -> showAlert("Error deleting physio", response.getErrorMessage(), 2));
+                        Platform.runLater(() -> showAlert("Error deleting physio", response.getError(), 2));
                     }
                 })
                 .exceptionally(_ -> {

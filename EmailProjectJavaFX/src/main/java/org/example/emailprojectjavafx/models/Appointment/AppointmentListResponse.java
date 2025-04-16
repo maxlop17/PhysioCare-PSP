@@ -7,9 +7,9 @@ import java.util.List;
 
 public class AppointmentListResponse extends BaseResponse {
 
-    List<Appointment> result;
+    List<Appointment> resultado;
 
     public List<Appointment> getAppointments() {
-        return result;
+        return resultado;
     }
 }

@@ -94,12 +94,12 @@ public class PatientsViewController implements Initializable {
                 .thenApply(json ->
                         gson.fromJson(json, PatientListResponse.class)
                 ).thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         Platform.runLater(() ->
                                 lsPatients.getItems().setAll(response.getPatients())
                         );
                     } else {
-                        showAlert("Error", response.getErrorMessage(), 2);
+                        showAlert("Error", response.getError(), 2);
                     }
                 }).exceptionally(_ -> {
                     showAlert("Error", "Failed to fetch patients", 2);
@@ -153,23 +153,21 @@ public class PatientsViewController implements Initializable {
     /*-----------------------------------------------------------------------------------------*/
 
     private void postPatient(Patient patient) {
-        btnAdd.setDisable(true);
         String url = ServiceUtils.SERVER + "/patients";
         String jsonRequest = gson.toJson(patient);
 
         ServiceUtils.getResponseAsync(url, jsonRequest, "POST")
                 .thenApply(json -> gson.fromJson(json, PatientResponse.class))
                 .thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         Platform.runLater(() -> {
                             showAlert("Added patient", response.getPatient().getName() + " added", 1);
                             getPatients();
                             clearFields();
-                            btnAdd.setDisable(false);
                         });
                     } else {
                         Platform.runLater(() ->
-                                showAlert("Error creating patient", response.getErrorMessage(), 2)
+                                showAlert("Error creating patient", response.getError(), 2)
                         );
                     }
                 })
@@ -180,23 +178,21 @@ public class PatientsViewController implements Initializable {
     }
 
     private void modifyPatient(Patient patient) {
-        btnUpdate.setDisable(true);
         String url = ServiceUtils.SERVER + "/patients/" + patient.getId();
         String jsonRequest = gson.toJson(patient);
 
         ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
                 .thenApply(json -> gson.fromJson(json, PatientResponse.class))
                 .thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         Platform.runLater(() -> {
                             showAlert("Updated patient", response.getPatient().getName() + " updated", 1);
                             getPatients();
-                            btnUpdate.setDisable(false);
                             clearFields();
                         });
                     } else {
                         Platform.runLater(() ->
-                                showAlert("Error modifying patient", response.getErrorMessage(), 2)
+                                showAlert("Error modifying patient", response.getError(), 2)
                         );
                     }
 
@@ -208,22 +204,20 @@ public class PatientsViewController implements Initializable {
     }
 
     private void deletePatient(Patient patient) {
-        btnDelete.setDisable(true);
         String url = ServiceUtils.SERVER + "/patients/" + patient.getId();
         String jsonRequest = "";
 
         ServiceUtils.getResponseAsync(url, jsonRequest, "DELETE")
                 .thenApply(json -> gson.fromJson(json, PatientResponse.class))
                 .thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         Platform.runLater(() -> {
                             showAlert("Deleted Patient", response.getPatient().getName() + " deleted", 1);
                             getPatients();
-                            btnDelete.setDisable(false);
                             clearFields();
                         });
                     } else {
-                        Platform.runLater(() -> showAlert("Error deleting patient", response.getErrorMessage(), 2));
+                        Platform.runLater(() -> showAlert("Error deleting patient", response.getError(), 2));
                     }
                 })
                 .exceptionally(_ -> {
@@ -245,8 +239,6 @@ public class PatientsViewController implements Initializable {
     }
 
     private Patient getValidatedDataFromForm() {
-
-
         String patientName = txtName.getText();
         String surname = txtSurname.getText();
         String address = txtAddress.getText();
@@ -281,10 +273,10 @@ public class PatientsViewController implements Initializable {
                 .thenApply(json ->
                         gson.fromJson(json, PhysioResponse.class)
                 ).thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         System.out.println("Physio: " + response.getPhysio());
                     } else {
-                        System.out.println("Error, no se ha encontrado el physio: " + response.getErrorMessage());
+                        System.out.println("Error, no se ha encontrado el physio: " + response.getError());
                     }
                 }).exceptionally(_ -> {
                     System.out.println("Error, no se ha encontrado el physio ");
@@ -304,10 +296,10 @@ public class PatientsViewController implements Initializable {
         ServiceUtils.getResponseAsync(url, jsonRequest, "POST")
                 .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
                 .thenAccept(response -> {
-                    if (!response.isError()) {
+                    if (response.isOk()) {
                         System.out.println("Appointment: " + response.getAppointment());
                     } else {
-                        System.out.println("Error, no se ha podido insertar el appointment: " + response.getErrorMessage());
+                        System.out.println("Error, no se ha podido insertar el appointment: " + response.getError());
                     }
                 })
                 .exceptionally(_ -> {

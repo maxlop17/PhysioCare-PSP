@@ -7,9 +7,9 @@ import java.util.List;
 
 public class PhysioListResponse extends BaseResponse {
 
-    List<Physio> result;
+    List<Physio> resultado;
 
     public List<Physio> getPhysios() {
-        return result;
+        return resultado;
     }
 }
