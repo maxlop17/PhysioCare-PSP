@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="700.0" style="-fx-background-color: #f0f0f0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.emailprojectjavafx.utils.email.EmailSenderController">
+    <center>
+        <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <StackPane>
+                    <children>
+                        <Rectangle arcHeight="20.0" arcWidth="20.0" fill="WHITE" height="550.0" stroke="TRANSPARENT" strokeType="INSIDE" width="650.0">
+                            <effect>
+                                <DropShadow color="#00000080" height="30.0" radius="14.5" width="30.0" />
+                            </effect>
+                        </Rectangle>
+                        <VBox alignment="CENTER" maxWidth="600.0" spacing="15.0">
+                            <children>
+                                <Label text="Formulario de Correo" textAlignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="24.0" />
+                                    </font>
+                                    <textFill>
+                                        <LinearGradient endX="1.0" endY="1.0">
+                                            <stops>
+                                                <Stop color="#6a11cb" />
+                                                <Stop color="#2575fc" offset="1.0" />
+                                            </stops>
+                                        </LinearGradient>
+                                    </textFill>
+                                </Label>
+                                <HBox alignment="CENTER" spacing="20.0">
+                                    <children>
+                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label text="Gmail Account:" textFill="#333333">
+                                                    <font>
+                                                        <Font name="System Bold" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <TextField fx:id="gmailField" promptText="tu.correo@gmail.com" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #dddddd; -fx-border-width: 1; -fx-padding: 8;">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </TextField>
+                                            </children>
+                                        </VBox>
+                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label text="Password:" textFill="#333333">
+                                                    <font>
+                                                        <Font name="System Bold" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <PasswordField fx:id="passwordField" promptText="Contraseña" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #dddddd; -fx-border-width: 1; -fx-padding: 8;">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </PasswordField>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Destination Email:" textFill="#333333">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="destinationField" promptText="destinatario@ejemplo.com" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #dddddd; -fx-border-width: 1; -fx-padding: 8;">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Subject:" textFill="#333333">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="subjectField" promptText="Asunto del mensaje" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #dddddd; -fx-border-width: 1; -fx-padding: 8;">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <Label text="Message:" textFill="#333333">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextArea fx:id="messageArea" prefHeight="180.0" promptText="Escribe tu mensaje aquí..." style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #dddddd; -fx-border-width: 1; -fx-padding: 8;" wrapText="true">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextArea>
+                                    </children>
+                                </VBox>
+                                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                                    <children>
+                                        <Button mnemonicParsing="false" onAction="#onBack" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Back">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                            <effect>
+                                                <DropShadow color="#00000040" height="5.0" radius="2.0" width="5.0" />
+                                            </effect>
+                                        </Button>
+                              <Separator prefHeight="7.0" prefWidth="325.0" visible="false" />
+                                        <Button defaultButton="true" mnemonicParsing="false" onAction="#onSend" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: linear-gradient(to right, #6a11cb, #2575fc); -fx-background-radius: 5; -fx-cursor: hand;" text="Send" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                            <effect>
+                                                <DropShadow height="10.0" radius="4.5" width="10.0" />
+                                            </effect>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </StackPane>
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </VBox>
+
+    </center>
+</BorderPane>

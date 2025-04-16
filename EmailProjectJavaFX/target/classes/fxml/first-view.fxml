@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.emailprojectjavafx.FirstViewController">
+    <children>
+        <VBox alignment="CENTER" maxWidth="800.0" spacing="30.0">
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+
+            <!-- Cabecera -->
+            <HBox alignment="CENTER" spacing="15.0">
+                <children>
+                    <!-- Aquí puedes insertar un logo -->
+                    <StackPane minHeight="70.0" minWidth="70.0" style="-fx-background-color: #3498db; -fx-background-radius: 35;">
+                        <children>
+                            <Label text="PC" textFill="WHITE">
+                                <font>
+                                    <Font name="System Bold" size="28.0" />
+                                </font>
+                            </Label>
+                        </children>
+                        <effect>
+                            <DropShadow color="#00000044" radius="10.0" spread="0.05" />
+                        </effect>
+                    </StackPane>
+
+                    <VBox alignment="CENTER_LEFT">
+                        <children>
+                            <Label text="PhysioCare" textFill="#2c3e50">
+                                <font>
+                                    <Font name="System Bold" size="30.0" />
+                                </font>
+                            </Label>
+                            <Label textFill="#7f8c8d">
+                                <font>
+                                    <Font size="16.0" />
+                                </font>
+                            </Label>
+                        </children>
+                    </VBox>
+                </children>
+            </HBox>
+
+            <!-- Contenido principal -->
+            <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15;" VBox.vgrow="ALWAYS">
+                <padding>
+                    <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                </padding>
+                <effect>
+                    <DropShadow color="#00000022" radius="15.0" spread="0.05" />
+                </effect>
+
+                <children>
+                    <Label text="Main Menu" textFill="#34495e">
+                        <font>
+                            <Font name="System Bold" size="22.0" />
+                        </font>
+                    </Label>
+
+                    <Label text="Select an option to continue" textFill="#7f8c8d">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                    </Label>
+
+                    <Region prefHeight="30.0" />
+
+                    <HBox alignment="CENTER" spacing="20.0">
+                        <children>
+                            <!-- Botón para gestión de pacientes -->
+                            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10;">
+                                <padding>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                </padding>
+                                <effect>
+                                    <DropShadow color="#00000011" radius="5.0" spread="0.05" />
+                                </effect>
+                                <children>
+
+                                    <Label text="Patients&#10;Management" textAlignment="CENTER" textFill="#2c3e50">
+                                        <font>
+                                            <Font name="System Bold" size="16.0" />
+                                        </font>
+                                    </Label>
+
+                                    <Button fx:id="btnPatients" onAction="#openPatientsAction" prefWidth="160.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Open">
+                                        <font>
+                                            <Font size="14.0" />
+                                        </font>
+                                    </Button>
+                                </children>
+                            </VBox>
+
+                            <!-- Botón para gestión de fisioterapeutas -->
+                            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10;">
+                                <padding>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                </padding>
+                                <effect>
+                                    <DropShadow color="#00000011" radius="5.0" spread="0.05" />
+                                </effect>
+                                <children>
+
+                                    <Label prefHeight="64.0" prefWidth="106.0" text="Physios&#10;Management" textAlignment="CENTER" textFill="#2c3e50" textOverrun="CLIP">
+                                        <font>
+                                            <Font name="System Bold" size="16.0" />
+                                        </font>
+                                    </Label>
+
+                                    <Button fx:id="btnPhysios" onAction="#openPhysiosAction" prefWidth="160.0" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Open">
+                                        <font>
+                                            <Font size="14.0" />
+                                        </font>
+                                    </Button>
+                                </children>
+                            </VBox>
+
+                            <!-- Botón para correo electrónico -->
+                            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10;">
+                                <padding>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                </padding>
+                                <effect>
+                                    <DropShadow color="#00000011" radius="5.0" spread="0.05" />
+                                </effect>
+                                <children>
+
+                                    <Label text="Email Sender" textFill="#2c3e50">
+                                        <font>
+                                            <Font name="System Bold" size="16.0" />
+                                        </font>
+                                    </Label>
+
+                                    <Button fx:id="btnEmail" onAction="#openEmailAction" prefWidth="160.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Open">
+                                        <font>
+                                            <Font size="14.0" />
+                                        </font>
+                                    </Button>
+                                </children>
+                            </VBox>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+
+            <!-- Pie de página -->
+            <HBox alignment="CENTER">
+                <children>
+                    <Label text="© 2025 PhysioCare" textFill="#95a5a6">
+                        <font>
+                            <Font size="12.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+        </VBox>
+    </children>
+</StackPane>
