@@ -2,6 +2,7 @@ package org.example.emailprojectjavafx.utils;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -34,5 +35,13 @@ public class Utils {
             showAlert("Error", "No se pudo cargar la vista: " + e.getMessage(), 2);
         }
     }
+    public static void switchView(Node source, Parent root, String title) {
+        Stage stage = (Stage) source.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setTitle(title);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 
 }

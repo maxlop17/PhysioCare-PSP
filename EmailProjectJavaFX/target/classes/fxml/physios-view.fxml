@@ -13,10 +13,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.layout.StackPane?>
 <VBox alignment="CENTER" prefHeight="801.0" prefWidth="917.0" spacing="15.0" style="-fx-background-color: #f5f8fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.emailprojectjavafx.PhysiosViewController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -61,7 +61,7 @@
                                 </TextField>
                             </children>
                         </HBox>
-                        <ListView fx:id="lsPhysios" style="-fx-background-radius: 4;" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="lsPhysios" onMouseClicked="#onMouseClicked" style="-fx-background-radius: 4;" VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
 

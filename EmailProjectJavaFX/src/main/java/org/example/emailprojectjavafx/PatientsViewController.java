@@ -84,8 +84,6 @@ public class PatientsViewController implements Initializable {
                     }
                 });
         getPatients();
-        getPhysioById();
-        addAppointmentToRecord();
     }
 
     private void getPatients() {
@@ -263,50 +261,6 @@ public class PatientsViewController implements Initializable {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    /*--------------------------------------------CORRECCION----------------------------------------------------*/
-
-    private void getPhysioById() {
-        String id = "675d61387a2489bffe8ee05d";
-
-        String url = ServiceUtils.SERVER + "/physios/" + id;
-        ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json ->
-                        gson.fromJson(json, PhysioResponse.class)
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        System.out.println("Physio: " + response.getPhysio());
-                    } else {
-                        System.out.println("Error, no se ha encontrado el physio: " + response.getError());
-                    }
-                }).exceptionally(_ -> {
-                    System.out.println("Error, no se ha encontrado el physio ");
-                    return null;
-                });
-    }
-
-    private void addAppointmentToRecord() {
-        Date date = new Date();
-
-        Appointment appointment = new Appointment(date, "675d61387a2489bffe8ee05d", "diagnostico", "tratamiento", "observations");
-        String url = ServiceUtils.SERVER + "/records/67e96e551387f9405d92eaf7/appointments";
-
-        System.out.println("Appointment a añadir: " + appointment);
-        String jsonRequest = gson.toJson(appointment);
-
-        ServiceUtils.getResponseAsync(url, jsonRequest, "POST")
-                .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
-                .thenAccept(response -> {
-                    if (response.isOk()) {
-                        System.out.println("Appointment: " + response.getAppointment());
-                    } else {
-                        System.out.println("Error, no se ha podido insertar el appointment: " + response.getError());
-                    }
-                })
-                .exceptionally(_ -> {
-                    System.out.println("Error, no se ha podido insertar el appointment");
-                    return null;
-                });
-    }
 }
 
 

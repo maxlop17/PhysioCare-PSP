@@ -35,4 +35,5 @@ module org.example.emailprojectjavafx {
     opens org.example.emailprojectjavafx.utils.services to javafx.fxml;
 
 
+
 }

@@ -14,22 +14,25 @@ public class Appointment {
     private String diagnosis;
     private String treatment;
     private String observations;
+    private Boolean confirmed;
 
-    public Appointment(Date date, String physio, String diagnosis, String treatment, String observations) {
+    public Appointment(Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed) {
         this.date = date;
         this.physio = physio;
         this.diagnosis = diagnosis;
         this.treatment = treatment;
         this.observations = observations;
+        this.confirmed = confirmed;
     }
 
-    public Appointment(String id, Date date, String physio, String diagnosis, String treatment, String observations) {
+    public Appointment(String id, Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed) {
         this.id = id;
         this.date = date;
         this.physio = physio;
         this.diagnosis = diagnosis;
         this.treatment = treatment;
         this.observations = observations;
+        this.confirmed = confirmed;
     }
 
     public String getId() {
@@ -78,6 +81,14 @@ public class Appointment {
 
     public void setObservations(String observations) {
         this.observations = observations;
+    }
+
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
     }
 
     @Override

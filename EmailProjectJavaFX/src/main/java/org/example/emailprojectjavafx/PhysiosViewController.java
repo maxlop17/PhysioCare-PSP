@@ -6,15 +6,20 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioListResponse;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -245,5 +250,26 @@ public class PhysiosViewController implements Initializable {
         String fxmlFile = "/fxml/first-view.fxml";
         String title = "Welcome | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
+    }
+
+    public void onMouseClicked(MouseEvent mouseEvent) throws IOException {
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && (mouseEvent.getClickCount() == 2)) {
+            Physio selectedPhysio = lsPhysios.getSelectionModel().getSelectedItem();
+
+            //Si no hay nada seleccionado mostramos un alert
+            if (selectedPhysio == null) {
+                showAlert("ERROR", "Select a physio", 2);
+            } else {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/physio-profile-view.fxml"));
+                Parent root = loader.load();
+                // Obtener el controlador y pasarle el objeto
+                PhysioProfileViewController controller = loader.getController();
+                controller.setPhysio(selectedPhysio);
+
+                Node source = (Node) mouseEvent.getSource();
+                String title = selectedPhysio.getName() + " | PhysioCare";
+                Utils.switchView(source, root, title);
+            }
+        }
     }
 }
