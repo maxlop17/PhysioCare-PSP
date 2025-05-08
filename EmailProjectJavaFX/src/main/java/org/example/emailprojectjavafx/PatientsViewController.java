@@ -5,13 +5,16 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
 import org.example.emailprojectjavafx.models.Patient.Patient;
@@ -21,6 +24,7 @@ import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -83,6 +87,25 @@ public class PatientsViewController implements Initializable {
                         }
                     }
                 });
+
+        lsPatients.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getClickCount() == 2){
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-profile-view.fxml"));
+                        Parent root = loader.load();
+                        PatientProfileViewController controller = loader.getController();
+                        controller.setPatient(lsPatients.getSelectionModel().getSelectedItem());
+                        Stage stage = new Stage();
+                        stage.setScene(new Scene(root));
+                        stage.show();
+                    } catch (IOException e) {
+                        Utils.showAlert("Error", "Error getting the profile", 2);
+                    }
+                }
+            }
+        });
         getPatients();
     }
 

@@ -13,7 +13,8 @@ import java.util.zip.GZIPInputStream;
 
 public class ServiceUtils {
     private static String token = null;
-    public static final String SERVER = "http://gloriaarnau.site:8082/psp";
+    //The official server: http://gloriaarnau.site:8082/psp
+    public static final String SERVER = "http://localhost:8080/psp";
 
     public static void setToken(String token) {
         ServiceUtils.token = token;
