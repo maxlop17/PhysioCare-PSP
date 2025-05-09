@@ -166,8 +166,14 @@ public class AppointmentDetailViewController implements Initializable {
                     if (response.isOk()) {
                         Platform.runLater(() -> {
                             cbPhysio.getItems().addAll(response.getPhysios());
+                            if(appointment.getPhysio() != null){
+                                for(Physio p : response.getPhysios()){
+                                    if(p.getId().equals(appointment.getPhysio())){
+                                        cbPhysio.getSelectionModel().select(p);
 
-                            cbPhysio.getSelectionModel().select(0);
+                                    }
+                                }
+                            }
                         });
                     } else {
                         showAlert("Error", response.getError(), 2);
