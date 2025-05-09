@@ -45,7 +45,7 @@ public class AppointmentDetailViewController implements Initializable {
     public TextArea txtObservations;
     @FXML
     public Label lblConfirmationStatus;
-    private Appointment appointment;
+    private Appointment appointment = new Appointment();
     Gson gson = new Gson();
     private Patient patient = null;
     private Physio physio = null;

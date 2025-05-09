@@ -16,6 +16,7 @@ public class Appointment {
     private String observations;
     private Boolean confirmed;
 
+    public Appointment(){}
     public Appointment(Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed) {
         this.date = date;
         this.physio = physio;

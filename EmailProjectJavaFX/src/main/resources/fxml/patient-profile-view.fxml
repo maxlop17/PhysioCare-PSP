@@ -94,8 +94,8 @@
                   <Label fx:id="lblRecord" text="Here goes the medical record" />
                   <GridPane prefHeight="288.0" prefWidth="298.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="295.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="214.0" minWidth="10.0" prefWidth="143.66666666666663" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -103,7 +103,10 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="155.0" text="Add appointment" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-background-color: #94c973r; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" > />
+                        <Button mnemonicParsing="false" onAction="#onAddAppointment" prefHeight="38.0" prefWidth="191.0" style="-fx-background-color: #94c973; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Add appointment" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets></Button>
                      </children>
                   </GridPane>
                     </children>
