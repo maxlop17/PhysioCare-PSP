@@ -39,8 +39,6 @@ import static org.example.emailprojectjavafx.utils.Utils.showAlert;
 
 public class PatientProfileViewController implements Initializable {
     @FXML
-    public Label lblId;
-    @FXML
     public Label lblName;
     @FXML
     public Label lblSurname;
@@ -117,7 +115,6 @@ public class PatientProfileViewController implements Initializable {
 
     private void loadData(){
         if(patient != null) {
-            lblId.setText(String.valueOf(patient.getId()));
             lblName.setText(patient.getName());
             lblSurname.setText(patient.getSurname());
             lblBirthdate.setText(String.valueOf(patient.getBirthDate()));
@@ -130,7 +127,6 @@ public class PatientProfileViewController implements Initializable {
 
     private void getAppointments(){
         String url = ServiceUtils.SERVER + "/records/" + patient.getId() + "/patient";
-        System.out.println(url);
         ServiceUtils.getResponseAsync(url, null, "GET")
                 .thenApply(json -> gson.fromJson(json, RecordListResponse.class)
                 ).thenAccept(response -> {
@@ -187,4 +183,10 @@ public class PatientProfileViewController implements Initializable {
         Utils.switchView(source, fxmlFile, title);
     }
 
+    public void onAddAppointment(ActionEvent actionEvent) {
+        Node source = (Node) actionEvent.getSource();
+        String fxmlFile = "/fxml/appointment-detail-view.fxml";
+        String title = "New appointment | PhysioCare";
+        Utils.switchView(source, fxmlFile, title);
+    }
 }

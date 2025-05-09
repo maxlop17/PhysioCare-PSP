@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import static org.example.emailprojectjavafx.utils.Utils.showAlert;
+import static org.example.emailprojectjavafx.utils.Utils.switchView;
 
 public class PatientsViewController implements Initializable {
 
@@ -96,9 +97,7 @@ public class PatientsViewController implements Initializable {
                             Parent root = loader.load();
                             PatientProfileViewController controller = loader.getController();
                             controller.setPatient(lsPatients.getSelectionModel().getSelectedItem());
-                            Stage stage = new Stage();
-                            stage.setScene(new Scene(root));
-                            stage.show();
+                            switchView((Node) mouseEvent.getSource(), root, "Patient | PhysioCare");
                         } catch (IOException e) {
                             Utils.showAlert("Error", "Error getting the profile", 2);
                         }

@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 
 import static org.example.emailprojectjavafx.utils.Utils.showAlert;
 
-public class AppointmentDetailViewController implements Initializable {
+public class AppointmentDetailViewController {
     @FXML
     public DatePicker dpDate;
     @FXML
@@ -65,10 +65,6 @@ public class AppointmentDetailViewController implements Initializable {
         this.patient = null;
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-    //ELIMINAR
-    }
 
     private void fillData(){
         if(appointment != null){
@@ -127,46 +123,54 @@ public class AppointmentDetailViewController implements Initializable {
     }
 
     public void onUpdateAppointment(ActionEvent actionEvent) {
-        String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
-        String jsonRequest = gson.toJson(getValidatedDataFromForm());
-        ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
-                .thenApply(json ->
-                        gson.fromJson(json, AppointmentResponse.class)
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Updated appointment", "Appointment updated", 1);
-                        });
-                    } else {
-                        showAlert("Error", response.getError(), 2);
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to fetch appointments", 2);
-                    return null;
-                });
+        if(appointment.getId() != null) {
+            String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
+            String jsonRequest = gson.toJson(getValidatedDataFromForm());
+            ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
+                    .thenApply(json ->
+                            gson.fromJson(json, AppointmentResponse.class)
+                    ).thenAccept(response -> {
+                        if (response.isOk()) {
+                            Platform.runLater(() -> {
+                                showAlert("Updated appointment", "Appointment updated", 1);
+                            });
+                        } else {
+                            showAlert("Error", response.getError(), 2);
+                        }
+                    }).exceptionally(_ -> {
+                        showAlert("Error", "Failed to fetch appointments", 2);
+                        return null;
+                    });
+        } else {
+            showAlert("ERROR", "There is no appointment to update", 2);
+        }
     }
 
     public void onDeleteAppointment(ActionEvent actionEvent) {
-        String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
-        String jsonRequest = "";
+        if(appointment.getId() != null) {
+            String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
+            String jsonRequest = "";
 
-        ServiceUtils.getResponseAsync(url, jsonRequest, "DELETE")
-                .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
-                .thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Deleted Appointment", response.getAppointment().getDiagnosis() +
-                                    " -  " + response.getAppointment().getDate() + " deleted", 1);
-                        });
-                        changeWindow(actionEvent);
-                    } else {
-                        Platform.runLater(() -> showAlert("Error deleting patient", response.getError(), 2));
-                    }
-                })
-                .exceptionally(_ -> {
-                    showAlert("Error", "Failed to delete patient", 2);
-                    return null;
-                });
+            ServiceUtils.getResponseAsync(url, jsonRequest, "DELETE")
+                    .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
+                    .thenAccept(response -> {
+                        if (response.isOk()) {
+                            Platform.runLater(() -> {
+                                showAlert("Deleted Appointment", response.getAppointment().getDiagnosis() +
+                                        " -  " + response.getAppointment().getDate() + " deleted", 1);
+                            });
+                            changeWindow(actionEvent);
+                        } else {
+                            Platform.runLater(() -> showAlert("Error deleting patient", response.getError(), 2));
+                        }
+                    })
+                    .exceptionally(_ -> {
+                        showAlert("Error", "Failed to delete patient", 2);
+                        return null;
+                    });
+        } else {
+            showAlert("ERROR", "There is no appointment to delete", 2);
+        }
     }
 
     private void changeWindow(ActionEvent actionEvent){
