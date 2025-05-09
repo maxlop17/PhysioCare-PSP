@@ -67,7 +67,7 @@ public class AppointmentDetailViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    //ELIMINAR
     }
 
     private void fillData(){
