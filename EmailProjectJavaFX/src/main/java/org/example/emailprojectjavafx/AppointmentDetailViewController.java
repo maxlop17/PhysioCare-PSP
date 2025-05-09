@@ -53,10 +53,12 @@ public class AppointmentDetailViewController implements Initializable {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+        this.physio = null;
     }
 
     public void setPhysio(Physio physio) {
         this.physio = physio;
+        this.patient = null;
     }
 
     @Override

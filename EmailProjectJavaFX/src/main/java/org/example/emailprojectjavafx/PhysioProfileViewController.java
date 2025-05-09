@@ -3,7 +3,9 @@ package org.example.emailprojectjavafx;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -13,9 +15,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentListResponse;
+import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
 import org.example.emailprojectjavafx.models.Physio.Physio;
+import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
+
+import java.io.IOException;
 
 import static org.example.emailprojectjavafx.utils.Utils.showAlert;
 
@@ -55,17 +61,17 @@ public class PhysioProfileViewController {
 
     public void onVerifyAppointments(ActionEvent actionEvent) {
         Appointment selectedAppointment = lstAppointments.getSelectionModel().getSelectedItem();
-        if(selectedAppointment == null){
+        if (selectedAppointment == null) {
             showAlert("ERROR", "Select an appointment to continue", 2);
-        }
-        else{
-            if(selectedAppointment.getConfirmed()){
+        } else {
+            if (selectedAppointment.getConfirmed()) {
                 showAlert("ERROR", "Appointment is already confirmed", 2);
-            }
-            else{
+            } else {
                 selectedAppointment.setConfirmed(true);
-                getAppointments();
+                modifyAppointment(selectedAppointment);
                 showAlert("APPOINTMENT CONFIRMED", "Appointment confirmed successfully", 1);
+                lstAppointments.refresh();
+
             }
         }
     }
@@ -77,7 +83,7 @@ public class PhysioProfileViewController {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    public void onMouseClicked(MouseEvent mouseEvent) {
+    public void onMouseClicked(MouseEvent mouseEvent) throws IOException {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && (mouseEvent.getClickCount() == 2)) {
             Appointment selectedAppointment = lstAppointments.getSelectionModel().getSelectedItem();
 
@@ -85,15 +91,18 @@ public class PhysioProfileViewController {
             if (selectedAppointment == null) {
                 showAlert("ERROR", "Select an appointment", 2);
             } else {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
+                Parent root = loader.load();
+                // Obtener el controlador y pasarle el objeto
+                AppointmentDetailViewController controller = loader.getController();
+                controller.setAppointment(selectedAppointment);
 
-
-
-
-
+                Node source = (Node) mouseEvent.getSource();
+                String title =  "Appointment | PhysioCare";
+                Utils.switchView(source, root, title);
             }
         }
     }
-
 
     private void getAppointments() {
         String url = ServiceUtils.SERVER + "/appointments/" + currentPhysio.getId() + "/physio";
@@ -116,9 +125,9 @@ public class PhysioProfileViewController {
                                     } else {
                                         setText(item.getDate() + "");
                                         if (item.getConfirmed()) {
-                                            setStyle("-fx-background-color: #d4edda; -fx-text-fill: #155724;");
+                                            setStyle("-fx-background-color: #94c973; -fx-text-fill: #ffffff;");
                                         } else {
-                                            setStyle("-fx-background-color: #f8d7da; -fx-text-fill: #721c24;");
+                                            setStyle("-fx-background-color: #c85250; -fx-text-fill: #ffffff;");
                                         }
                                     }
                                 }
@@ -132,5 +141,23 @@ public class PhysioProfileViewController {
                     return null;
                 });
     }
+
+    private void modifyAppointment(Appointment appointment) {
+        String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
+        String jsonRequest = gson.toJson(appointment);
+
+        ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
+                .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
+                .thenAccept(response -> {
+                    if (!response.isOk()) {
+                        Platform.runLater(() ->
+                                showAlert("Error modifying appointment", response.getError(), 2));
+                    }
+                }).exceptionally(_ -> {
+                    showAlert("Error", "Failed to update appointment", 2);
+                    return null;
+                });
+    }
+
 
 }
