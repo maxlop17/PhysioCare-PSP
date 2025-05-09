@@ -17,15 +17,23 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentListResponse;
+import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
 import org.example.emailprojectjavafx.models.Patient.Patient;
+import org.example.emailprojectjavafx.models.Physio.Physio;
+import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
+import org.example.emailprojectjavafx.models.Record.Record;
+import org.example.emailprojectjavafx.models.Record.RecordListResponse;
 import org.example.emailprojectjavafx.models.Record.RecordResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
+import javax.security.auth.callback.Callback;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 import static org.example.emailprojectjavafx.utils.Utils.showAlert;
 
@@ -51,28 +59,24 @@ public class PatientProfileViewController implements Initializable {
     public Patient patient;
     Gson gson = new Gson();
 
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+        loadData();
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(patient != null) {
-            lblId.setText(String.valueOf(patient.getId()));
-            lblName.setText(patient.getName());
-            lblSurname.setText(patient.getSurname());
-            lblBirthdate.setText(String.valueOf(patient.getBirthDate()));
-            lblAddress.setText(patient.getAddress());
-            lblEmail.setText(patient.getEmail());
-            getAppointments();
-        }
-
+        //Configuration to change the window on double click to the appointment
         lvAppointments.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(mouseEvent.getClickCount() == 2){
                     try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-profile-view.fxml"));
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
                         Parent root = loader.load();
                         AppointmentDetailViewController controller = loader.getController();
                         controller.setAppointment(lvAppointments.getSelectionModel().getSelectedItem());
-                        controller.setIsPatient(true);
+                        controller.setPatient(patient);
                         Stage stage = new Stage();
                         stage.setScene(new Scene(root));
                         stage.show();
@@ -82,19 +86,59 @@ public class PatientProfileViewController implements Initializable {
                 }
             }
         });
+
+        //Configuration to set the text on the listview
+        lvAppointments.setCellFactory(appointmentListView -> new ListCell<Appointment>() {
+            @Override
+            protected void updateItem(Appointment item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    String url = ServiceUtils.SERVER + "/physios/" + item.getPhysio();
+                    ServiceUtils.getResponseAsync(url, null, "GET")
+                            .thenApply(json -> gson.fromJson(json, PhysioResponse.class)
+                            ).thenAccept(response -> {
+                                if (response.isOk()) {
+                                    Platform.runLater(() -> {
+                                        setText(getAppointmentText(item, response.getPhysio()));
+                                    });
+                                } else {
+                                    showAlert("Error", response.getError(), 2);
+                                }
+                            }).exceptionally(_ -> {
+                                showAlert("Error", "Failed to fetch physio", 2);
+                                return null;
+                            });
+                }
+            }
+        });
+    }
+
+    private void loadData(){
+        if(patient != null) {
+            lblId.setText(String.valueOf(patient.getId()));
+            lblName.setText(patient.getName());
+            lblSurname.setText(patient.getSurname());
+            lblBirthdate.setText(String.valueOf(patient.getBirthDate()));
+            lblAddress.setText(patient.getAddress());
+            lblEmail.setText(patient.getEmail());
+            lblInsurance.setText(patient.getInsuranceNumber());
+            getAppointments();
+        }
     }
 
     private void getAppointments(){
         String url = ServiceUtils.SERVER + "/records/" + patient.getId() + "/patient";
+        System.out.println(url);
         ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json ->
-                        gson.fromJson(json, RecordResponse.class)
+                .thenApply(json -> gson.fromJson(json, RecordListResponse.class)
                 ).thenAccept(response -> {
                     if (response.isOk()) {
-                        List<Appointment> apps = response.getRecord().getAppointments();
-                        Platform.runLater(() -> {
-                            lvAppointments.getItems().setAll(apps);
-                        });
+                        Record record = response.getRecords().getFirst();
+                        lblRecord.setText(record.getMedicalRecord());
+                        System.out.println(record.getAppointments());
+                        record.getAppointments().forEach(this::getAppointmentById);
                     } else {
                         showAlert("Error", response.getError(), 2);
                     }
@@ -104,8 +148,36 @@ public class PatientProfileViewController implements Initializable {
                 });
     }
 
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+    private void getAppointmentById(String id){
+        String url = ServiceUtils.SERVER + "/appointments/" + id;
+        System.out.println(url);
+        ServiceUtils.getResponseAsync(url, null, "GET")
+                .thenApply(json -> {
+                            System.out.println(gson.fromJson(json, AppointmentResponse.class));
+                            return gson.fromJson(json, AppointmentResponse.class);
+                        }
+                ).thenAccept(response -> {
+                    if (response.isOk()) {
+                        System.out.println(response);
+                        Platform.runLater(() -> {
+                            lvAppointments.getItems().add(response.getAppointment());
+                        });
+                    } else {
+                        showAlert("Error", response.getError(), 2);
+                    }
+                }).exceptionally(_ -> {
+                    showAlert("Error", "Failed to fetch appointment", 2);
+                    return null;
+                });
+    }
+
+    public String getAppointmentText(Appointment appointment, Physio physio){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String confirmed = "Not specified";
+        if(appointment.getConfirmed() != null)
+            confirmed = appointment.getConfirmed() ? "Confirmed" : "Pending verification";
+        return formatter.format(appointment.getDate()) + " | Physio: " + physio.getName() +
+        " " + physio.getSurname() + " | " + appointment.getDiagnosis() + " | " + confirmed;
     }
 
     public void onBackButtonClick(ActionEvent actionEvent) {

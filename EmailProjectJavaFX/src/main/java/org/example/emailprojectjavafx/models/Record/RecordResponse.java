@@ -5,9 +5,16 @@ import org.example.emailprojectjavafx.models.BaseResponse;
 
 public class RecordResponse extends BaseResponse {
 
-    private Record result;
+    private Record resultado;
 
     public Record getRecord() {
-        return result;
+        return resultado;
+    }
+
+    @Override
+    public String toString() {
+        return "RecordResponse{" +
+                "resultado=" + resultado +
+                '}';
     }
 }

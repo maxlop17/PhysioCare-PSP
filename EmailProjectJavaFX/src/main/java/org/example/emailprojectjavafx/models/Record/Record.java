@@ -9,17 +9,17 @@ import java.util.List;
 public class Record {
     @SerializedName("_id")
     private String id;
-    private Patient patient;
+    private String patient;
     private String medicalRecord;
-    private List<Appointment> appointments;
+    private List<String> appointments;
 
-    public Record(Patient patient, String medicalRecord, List<Appointment> appointments) {
+    public Record(String patient, String medicalRecord, List<String> appointments) {
         this.patient = patient;
         this.medicalRecord = medicalRecord;
         this.appointments = appointments;
     }
 
-    public Record(String id, Patient patient, String medicalRecord, List<Appointment> appointments) {
+    public Record(String id, String patient, String medicalRecord, List<String> appointments) {
         this.id = id;
         this.patient = patient;
         this.medicalRecord = medicalRecord;
@@ -34,11 +34,11 @@ public class Record {
         this.id = id;
     }
 
-    public Patient getPatient() {
+    public String getPatient() {
         return patient;
     }
 
-    public void setPatient(Patient patient) {
+    public void setPatient(String patient) {
         this.patient = patient;
     }
 
@@ -50,11 +50,11 @@ public class Record {
         this.medicalRecord = medicalRecord;
     }
 
-    public List<Appointment> getAppointments() {
+    public List<String> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<Appointment> appointments) {
+    public void setAppointments(List<String> appointments) {
         this.appointments = appointments;
     }
 

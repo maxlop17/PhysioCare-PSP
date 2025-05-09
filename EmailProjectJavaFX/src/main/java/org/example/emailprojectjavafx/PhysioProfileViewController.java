@@ -96,7 +96,7 @@ public class PhysioProfileViewController {
 
 
     private void getAppointments() {
-        String url = ServiceUtils.SERVER + "/appointments/" + currentPhysio.getId();
+        String url = ServiceUtils.SERVER + "/appointments/" + currentPhysio.getId() + "/physio";
         ServiceUtils.getResponseAsync(url, null, "GET")
                 .thenApply(json ->
                         gson.fromJson(json, AppointmentListResponse.class)

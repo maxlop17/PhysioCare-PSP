@@ -12,4 +12,11 @@ public class AppointmentListResponse extends BaseResponse {
     public List<Appointment> getAppointments() {
         return resultado;
     }
+
+    @Override
+    public String toString() {
+        return "AppointmentListResponse{" +
+                "resultado=" + resultado +
+                '}';
+    }
 }

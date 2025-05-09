@@ -7,9 +7,16 @@ import java.util.List;
 
 public class RecordListResponse extends BaseResponse {
 
-    List<Record> result;
+    List<Record> resultado;
 
     public List<Record> getRecords() {
-        return result;
+        return resultado;
+    }
+
+    @Override
+    public String toString() {
+        return "RecordListResponse{" +
+                "resultado=" + resultado +
+                '}';
     }
 }

@@ -47,8 +47,6 @@ public class PatientsViewController implements Initializable {
     private TextField txtInsuranceNumber;
     @FXML
     private TextField txtEmail;
-
-
     @FXML
     private ListView<Patient> lsPatients;
     @FXML
@@ -92,16 +90,18 @@ public class PatientsViewController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(mouseEvent.getClickCount() == 2){
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-profile-view.fxml"));
-                        Parent root = loader.load();
-                        PatientProfileViewController controller = loader.getController();
-                        controller.setPatient(lsPatients.getSelectionModel().getSelectedItem());
-                        Stage stage = new Stage();
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                    } catch (IOException e) {
-                        Utils.showAlert("Error", "Error getting the profile", 2);
+                    if(lsPatients.getSelectionModel().getSelectedItem() != null) {
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/patient-profile-view.fxml"));
+                            Parent root = loader.load();
+                            PatientProfileViewController controller = loader.getController();
+                            controller.setPatient(lsPatients.getSelectionModel().getSelectedItem());
+                            Stage stage = new Stage();
+                            stage.setScene(new Scene(root));
+                            stage.show();
+                        } catch (IOException e) {
+                            Utils.showAlert("Error", "Error getting the profile", 2);
+                        }
                     }
                 }
             }
