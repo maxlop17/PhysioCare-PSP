@@ -28,4 +28,12 @@ public class FirstViewController {
         String title = "Physios | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
     }
+
+    public void openMyProfileAction(ActionEvent actionEvent) {
+
+        Node source = (Node) actionEvent.getSource();
+        String fxmlFile = "/fxml/physios-view.fxml";
+        String title = "Physios | PhysioCare";
+        Utils.switchView(source, fxmlFile, title);
+    }
 }

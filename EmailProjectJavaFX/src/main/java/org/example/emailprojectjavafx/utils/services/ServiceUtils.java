@@ -7,14 +7,18 @@ import org.example.emailprojectjavafx.models.Auth.LoginRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 
 public class ServiceUtils {
     private static String token = null;
-    //The official server: http://gloriaarnau.site:8082/psp
-    public static final String SERVER = "http://localhost:8080/psp";
+    public static final String SERVER = "https://gloriaarnau.site/api";
+    private static final Path tokenPath = Paths.get("tokens/token.txt");
 
     public static void setToken(String token) {
         ServiceUtils.token = token;
@@ -32,6 +36,7 @@ public class ServiceUtils {
             AuthResponse authResponse = new Gson().fromJson(jsonResponse, AuthResponse.class);
             if (authResponse != null && authResponse.isOk()) {
                 setToken(authResponse.getToken());
+                saveToken(authResponse.getToken());
                 return true;
             }
 
@@ -39,6 +44,48 @@ public class ServiceUtils {
             System.out.println("WRONG LOGIN");
         }
         return false;
+    }
+
+    /**
+     * Method to save the token in the system
+     * @param token
+     */
+    private static void saveToken(String token){
+        try {
+            Files.writeString(tokenPath, token, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e){
+            System.out.println("Error saving the token: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Method that gets the saved token
+     * @return
+     */
+    public static String getToken() {
+        String token = "";
+        try {
+            if (Files.exists(tokenPath)) {
+                token = Files.readString(tokenPath);
+            }
+        }catch (IOException e){
+            System.out.println("Error getting token: " + e.getMessage());
+        }
+        return token;
+    }
+
+    /**
+     * Method that makes a petition to the server and checks if the token is valid
+     * @param token
+     * @return
+     */
+    public static boolean validToken(String token) {
+        try{
+            getResponse(SERVER + "/patients", null, "GET");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // Get charset encoding (UTF-8, ISO,...)

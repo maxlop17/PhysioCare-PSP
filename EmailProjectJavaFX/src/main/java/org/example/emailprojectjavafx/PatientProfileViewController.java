@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
@@ -55,6 +56,7 @@ public class PatientProfileViewController implements Initializable {
     @FXML
     public ListView<Appointment> lvAppointments;
     public Patient patient;
+    public ImageView imgProfile;
     Gson gson = new Gson();
 
     public void setPatient(Patient patient) {
@@ -188,5 +190,8 @@ public class PatientProfileViewController implements Initializable {
         String fxmlFile = "/fxml/appointment-detail-view.fxml";
         String title = "New appointment | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
+    }
+
+    public void onChangePhotoClick(ActionEvent actionEvent) {
     }
 }
