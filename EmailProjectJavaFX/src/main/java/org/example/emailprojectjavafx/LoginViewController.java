@@ -21,18 +21,16 @@ public class LoginViewController implements Initializable {
     @FXML
     private TextField txtPassword;
 
-
     public void onLogin(ActionEvent actionEvent) {
         String username = txtUsername.getText();
         String password = txtPassword.getText();
 
         if(username.isEmpty() || password.isEmpty()) {
             Utils.showAlert("ERROR", "Error: all fields must be filled to continue.", 2);
-        }
-        else {
+        } else {
             if(ServiceUtils.login(username, password)){
                 Node source = (Node) actionEvent.getSource();
-                switchView(source);
+                switchView(source, "/fxml/first-view.fxml");
             }
             else{
                 Utils.showAlert("ERROR", "Error: login failed. User or password incorrect.", 2);
@@ -40,8 +38,7 @@ public class LoginViewController implements Initializable {
         }
     }
 
-    private void switchView(Node source){
-        String fxmlFile = "/fxml/first-view.fxml";
+    private void switchView(Node source, String fxmlFile){
         String title = "Welcome | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
     }
@@ -52,7 +49,7 @@ public class LoginViewController implements Initializable {
         if(!token.isEmpty()) {
             ServiceUtils.setToken(token);
             Utils.showAlert("Login correct", "Login already done", 1);
-            switchView(vbox);
+            switchView(vbox, "/fxml/first-view.fxml");
         }
     }
 }

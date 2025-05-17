@@ -17,7 +17,7 @@ import java.util.zip.GZIPInputStream;
 
 public class ServiceUtils {
     private static String token = null;
-    public static final String SERVER = "https://gloriaarnau.site/api";
+    public static final String SERVER = "https://gloriaarnau.site";
     private static final Path tokenPath = Paths.get("tokens/token.txt");
 
     public static void setToken(String token) {
