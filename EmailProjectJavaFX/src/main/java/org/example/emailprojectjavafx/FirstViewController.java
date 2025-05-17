@@ -34,7 +34,15 @@ public class FirstViewController {
     public void openMyProfileAction(ActionEvent actionEvent) {
         Node source = (Node) actionEvent.getSource();
         String fxmlFile = "/fxml/my-profile-view.fxml";
-        String title = "Physios | PhysioCare";
+        String title = "Profile | PhysioCare";
+        Utils.switchView(source, fxmlFile, title);
+    }
+
+    public void onLogoutAction(ActionEvent actionEvent) {
+        TokenUtils.removeToken();
+        Node source = (Node) actionEvent.getSource();
+        String fxmlFile = "/fxml/login-view.fxml";
+        String title = "Login | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
     }
 }

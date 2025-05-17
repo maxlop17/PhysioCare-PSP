@@ -49,9 +49,6 @@
                             <StackPane>
                                 <Circle fx:id="circleClip" fill="WHITE" radius="70.0" />
                                 <ImageView fx:id="imgAvatar" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@/images/user_placeholder.png" />
-                                    </image>
                                     <effect>
                                         <DropShadow color="#00000033" radius="5.0" />
                                     </effect>
@@ -86,8 +83,6 @@
                                     </Label>
                                 </children>
                             </HBox>
-
-                            <Label fx:id="lblLastLogin" text="Last login: 15/05/2025 15:30" textFill="#7f8c8d" />
                         </VBox>
 
                         <!-- Panel de botones de acción -->
@@ -115,25 +110,37 @@
                         </columnConstraints>
                         <rowConstraints>
                             <RowConstraints />
-                            <RowConstraints />
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" />
                             <RowConstraints />
                             <RowConstraints />
                         </rowConstraints>
 
                         <Label style="-fx-font-weight: bold;" text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                        <Label fx:id="lblLoginId" text="username123" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label fx:id="lblUsernameInfo" text="username123" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                        <Label style="-fx-font-weight: bold;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                        <Label fx:id="lblEmail" text="user@example.com" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-                        <Label style="-fx-font-weight: bold;" text="Account Created:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                        <Label fx:id="lblCreatedAt" text="01/01/2025" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label style="-fx-font-weight: bold;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="lblEmail" text="user@example.com" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                         <Label style="-fx-font-weight: bold;" text="Account Status:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                         <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                             <Circle fill="#2ecc71" radius="5" />
                             <Label text="Active" />
                         </HBox>
+                  <Label text="Password:" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Button mnemonicParsing="false" onAction="#onChangePasswordAction" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;" text="Change Password" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="200.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <PasswordField fx:id="txtPassword" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="430.0" />
+                     </GridPane.margin>
+                  </PasswordField>
                     </GridPane>
                 </VBox>
 

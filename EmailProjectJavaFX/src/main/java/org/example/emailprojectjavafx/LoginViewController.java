@@ -8,11 +8,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 import org.example.emailprojectjavafx.utils.Utils;
+import org.example.emailprojectjavafx.utils.services.TokenUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class LoginViewController implements Initializable {
+public class LoginViewController {
 
     @FXML
     public VBox vbox;
@@ -43,13 +44,4 @@ public class LoginViewController implements Initializable {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        String token = ServiceUtils.getToken();
-        if(!token.isEmpty()) {
-            ServiceUtils.setToken(token);
-            Utils.showAlert("Login correct", "Login already done", 1);
-            switchView(vbox, "/fxml/first-view.fxml");
-        }
-    }
 }

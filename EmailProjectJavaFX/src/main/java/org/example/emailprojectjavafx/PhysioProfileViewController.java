@@ -16,8 +16,11 @@ import javafx.scene.input.MouseEvent;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentListResponse;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
+import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Physio.Physio;
+import org.example.emailprojectjavafx.models.Record.Record;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
+import org.example.emailprojectjavafx.models.Record.RecordResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
@@ -40,9 +43,8 @@ public class PhysioProfileViewController {
     private Label lblLicenseNumber;
     @FXML
     private Label lblEmail;
-
+    private Record record = null;
     Gson gson = new Gson();
-
     private Physio currentPhysio;
 
     public void setPhysio(Physio physio) {
@@ -105,59 +107,56 @@ public class PhysioProfileViewController {
     }
 
     private void getAppointments() {
-        String url = ServiceUtils.SERVER + "/appointments/" + currentPhysio.getId() + "/physio";
-        ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json ->
-                        gson.fromJson(json, AppointmentListResponse.class)
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            lstAppointments.getItems().setAll(response.getAppointments());
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "records", "/appointments/" + currentPhysio.getId() + "/physio",
+                "GET", null, AppointmentListResponse.class,
+                appointmentListResponse -> {
+                    Platform.runLater(() -> {
+                        lstAppointments.getItems().setAll(appointmentListResponse.getAppointments());
 
-                            // Estilizado por estado de confirmación
-                            lstAppointments.setCellFactory(lv -> new ListCell<Appointment>() {
-                                @Override
-                                protected void updateItem(Appointment item, boolean empty) {
-                                    super.updateItem(item, empty);
-                                    if (empty || item == null) {
-                                        setText(null);
-                                        setStyle("");
+                        // Estilizado por estado de confirmación
+                        lstAppointments.setCellFactory(lv -> new ListCell<Appointment>() {
+                            @Override
+                            protected void updateItem(Appointment item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty || item == null) {
+                                    setText(null);
+                                    setStyle("");
+                                } else {
+                                    setText(item.getDate() + "");
+                                    if (item.getConfirmed()) {
+                                        setStyle("-fx-background-color: #94c973; -fx-text-fill: #ffffff;");
                                     } else {
-                                        setText(item.getDate() + "");
-                                        if (item.getConfirmed()) {
-                                            setStyle("-fx-background-color: #94c973; -fx-text-fill: #ffffff;");
-                                        } else {
-                                            setStyle("-fx-background-color: #c85250; -fx-text-fill: #ffffff;");
-                                        }
+                                        setStyle("-fx-background-color: #c85250; -fx-text-fill: #ffffff;");
                                     }
                                 }
-                            });
+                            }
                         });
-                    } else {
-                        showAlert("Error", response.getError(), 2);
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to fetch appointments", 2);
-                    return null;
-                });
+                    });
+                }, "Failed to fetch appointments"
+        ));
     }
 
     private void modifyAppointment(Appointment appointment) {
-        String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
-        String jsonRequest = gson.toJson(appointment);
-
-        ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
-                .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
-                .thenAccept(response -> {
-                    if (!response.isOk()) {
-                        Platform.runLater(() ->
-                                showAlert("Error modifying appointment", response.getError(), 2));
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to update appointment", 2);
-                    return null;
-                });
+        getRecord(appointment.getId());
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "records", record.getId() + "/appointments/" + appointment.getId(),
+                "PUT", gson.toJson(appointment), AppointmentResponse.class,
+                appointmentListResponse -> {
+                    Platform.runLater(() ->
+                            showAlert("Appointment updated", appointmentListResponse.getError(), 1));
+                }, "Failed to fetch appointments"
+        ));
     }
 
+    private void getRecord(String id){
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "records", "/appointments/" + id + "/record",
+                "GET", null, RecordResponse.class,
+                recordResponse -> {
+                    record = recordResponse.getRecord();
+                }, "Failed to fetch record"
+        ));
+    }
 
 }

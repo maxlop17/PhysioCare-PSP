@@ -19,7 +19,9 @@ import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentListResponse;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
+import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Patient.Patient;
+import org.example.emailprojectjavafx.models.Patient.PatientResponse;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.models.Record.Record;
@@ -95,21 +97,14 @@ public class PatientProfileViewController implements Initializable {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    String url = ServiceUtils.SERVER + "/physios/" + item.getPhysio();
-                    ServiceUtils.getResponseAsync(url, null, "GET")
-                            .thenApply(json -> gson.fromJson(json, PhysioResponse.class)
-                            ).thenAccept(response -> {
-                                if (response.isOk()) {
-                                    Platform.runLater(() -> {
-                                        setText(getAppointmentText(item, response.getPhysio()));
-                                    });
-                                } else {
-                                    showAlert("Error", response.getError(), 2);
-                                }
-                            }).exceptionally(_ -> {
-                                showAlert("Error", "Failed to fetch physio", 2);
-                                return null;
-                            });
+                    ServiceUtils.makePetition(new GenericPetition<>(
+                            "physios", item.getPhysio(), "GET", null, PhysioResponse.class,
+                            physioResponse -> {
+                                Platform.runLater(() -> {
+                                    setText(getAppointmentText(item, physioResponse.getPhysio()));
+                                });
+                            }, "Failed to fetch physio"
+                    ));
                 }
             }
         });
@@ -128,45 +123,26 @@ public class PatientProfileViewController implements Initializable {
     }
 
     private void getAppointments(){
-        String url = ServiceUtils.SERVER + "/records/" + patient.getId() + "/patient";
-        ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json -> gson.fromJson(json, RecordListResponse.class)
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        Record record = response.getRecords().getFirst();
-                        lblRecord.setText(record.getMedicalRecord());
-                        System.out.println(record.getAppointments());
-                        record.getAppointments().forEach(this::getAppointmentById);
-                    } else {
-                        showAlert("Error", response.getError(), 2);
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to fetch appointments", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "records", patient.getId( )+ "/patient", "GET", null, RecordListResponse.class,
+                recordListResponse -> {
+                    Record record = recordListResponse.getRecords().getFirst();
+                    lblRecord.setText(record.getMedicalRecord());
+                    System.out.println(record.getAppointments());
+                    record.getAppointments().forEach(this::getAppointmentById);
+                }, "Failed to fetch appointments"
+        ));
     }
 
     private void getAppointmentById(String id){
-        String url = ServiceUtils.SERVER + "/appointments/" + id;
-        System.out.println(url);
-        ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json -> {
-                            System.out.println(gson.fromJson(json, AppointmentResponse.class));
-                            return gson.fromJson(json, AppointmentResponse.class);
-                        }
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        System.out.println(response);
-                        Platform.runLater(() -> {
-                            lvAppointments.getItems().add(response.getAppointment());
-                        });
-                    } else {
-                        showAlert("Error", response.getError(), 2);
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to fetch appointment", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "records", "/appointments/" + id, "GET", null, AppointmentResponse.class,
+                appointmentResponse -> {
+                    Platform.runLater(() -> {
+                        lvAppointments.getItems().add(appointmentResponse.getAppointment());
+                    });
+                }, "Failed to fetch appointment"
+        ));
     }
 
     public String getAppointmentText(Appointment appointment, Physio physio){

@@ -34,7 +34,7 @@ module org.example.emailprojectjavafx {
     opens org.example.emailprojectjavafx.models to com.google.gson;
     exports org.example.emailprojectjavafx.utils.services;
     opens org.example.emailprojectjavafx.utils.services to javafx.fxml;
-
+    opens org.example.emailprojectjavafx.models.User to com.google.gson;
 
 
 }
