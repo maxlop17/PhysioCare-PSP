@@ -1,6 +1,7 @@
 package org.example.emailprojectjavafx;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +36,10 @@ public class PhysiosViewController implements Initializable {
     private TextField txtLicenseNumber;
     @FXML
     private TextField txtEmail;
+    @FXML
+    private TextField txtLogin;
+    @FXML
+    private TextField txtPassword;
 
 
     @FXML
@@ -64,7 +69,6 @@ public class PhysiosViewController implements Initializable {
                             txtLicenseNumber.setText(t2.getLicenseNumber());
                             txtEmail.setText(t2.getEmail());
                             cbSpecialization.setValue(t2.getSpecialty());
-
                         } else {
                             txtName.setText("");
                             txtSurname.setText("");
@@ -102,7 +106,7 @@ public class PhysiosViewController implements Initializable {
         if (selectedPhysio != null) {
             showAlert("Warning", "To add a new physio, please deselect the selected physio from the list or press the 'Clear Fields' button.", 2);
         } else {
-            Physio newPhysio = getValidatedDataFromForm();
+            Physio newPhysio = getValidatedDataFromForm(false);
             if (newPhysio != null) {
                 postPhysio(newPhysio);
             }
@@ -114,7 +118,7 @@ public class PhysiosViewController implements Initializable {
         if (selectedPhysio == null) {
             showAlert("Error", "Select a physio to update.", 2);
         } else {
-            Physio updatedPhysio = getValidatedDataFromForm();
+            Physio updatedPhysio = getValidatedDataFromForm(true);
             if (updatedPhysio != null) {
                 updatedPhysio.setId(selectedPhysio.getId());
                 modifyPhysio(updatedPhysio);
@@ -142,7 +146,12 @@ public class PhysiosViewController implements Initializable {
     private void postPhysio(Physio physio) {
         btnAdd.setDisable(true);
         String url = ServiceUtils.SERVER + "/physios";
-        String jsonRequest = gson.toJson(physio);
+        JsonObject physioJson = gson.toJsonTree(physio).getAsJsonObject();
+
+        physioJson.addProperty("login", txtLogin.getText());
+        physioJson.addProperty("password", txtPassword.getText());
+
+        String jsonRequest = gson.toJson(physioJson);
 
         ServiceUtils.getResponseAsync(url, jsonRequest, "POST")
                 .thenApply(json -> gson.fromJson(json, PhysioResponse.class))
@@ -225,22 +234,34 @@ public class PhysiosViewController implements Initializable {
         txtSurname.clear();
         txtLicenseNumber.clear();
         txtEmail.clear();
+        txtLogin.clear();
+        txtPassword.clear();
         cbSpecialization.setValue(null);
         lsPhysios.getSelectionModel().clearSelection();
     }
 
-    private Physio getValidatedDataFromForm() {
+    private Physio getValidatedDataFromForm(Boolean modify) {
 
         String name = txtName.getText();
         String surname = txtSurname.getText();
         String licenseNumber = txtLicenseNumber.getText();
         String email = txtEmail.getText();
-        String specialty = cbSpecialization.getValue();
+        String specialty = cbSpecialization.getValue().toLowerCase();
+        String login = txtLogin.getText();
+        String password = txtPassword.getText();
+
 
         if (name.isEmpty() || surname.isEmpty() || licenseNumber.isEmpty() || email.isEmpty() || specialty.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
             return null;
         }
+
+        if (!modify && (login.isEmpty() || password.isEmpty())) {
+            showAlert("Error", "Login and password are required for new physios.", 2);
+            return null;
+        }
+
+
         return new Physio(name, surname, licenseNumber, specialty, email);
     }
 
