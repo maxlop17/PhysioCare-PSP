@@ -33,7 +33,7 @@ public class SftpUtils {
             channel = session.openChannel("sftp");
             channel.connect();
             sftpChannel = (ChannelSftp) channel;
-            System.out.println("Connected sftpChannel");
+            System.out.println("Connected sftpChannel to the server");
             return sftpChannel;
 
         } catch (Exception e) {
