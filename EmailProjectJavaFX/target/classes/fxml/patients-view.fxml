@@ -110,6 +110,13 @@
                                     <!-- Correo Electrónico -->
                                     <Label style="-fx-font-weight: bold;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
                                     <TextField fx:id="txtEmail" promptText="Email" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <!-- Login -->
+                                    <Label style="-fx-font-weight: bold;" text="Login:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                                    <TextField fx:id="txtLogin" promptText="Login" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    <!-- password -->
+                                    <Label style="-fx-font-weight: bold;" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                                    <TextField fx:id="txtPassword" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
 
                                     <rowConstraints>
                               <RowConstraints />

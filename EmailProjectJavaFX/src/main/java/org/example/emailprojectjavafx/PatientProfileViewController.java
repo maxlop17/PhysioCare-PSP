@@ -17,7 +17,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
-import org.example.emailprojectjavafx.models.Appointment.AppointmentListResponse;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
 import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Patient.Patient;
@@ -26,17 +25,13 @@ import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.models.Record.Record;
 import org.example.emailprojectjavafx.models.Record.RecordListResponse;
-import org.example.emailprojectjavafx.models.Record.RecordResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
-import javax.security.auth.callback.Callback;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
 
 import static org.example.emailprojectjavafx.utils.Utils.showAlert;
 
@@ -77,8 +72,8 @@ public class PatientProfileViewController implements Initializable {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
                         Parent root = loader.load();
                         AppointmentDetailViewController controller = loader.getController();
-                        controller.setAppointment(lvAppointments.getSelectionModel().getSelectedItem());
                         controller.setPatient(patient);
+                        controller.setAppointment(lvAppointments.getSelectionModel().getSelectedItem());
                         Stage stage = new Stage();
                         stage.setScene(new Scene(root));
                         stage.show();
@@ -161,11 +156,21 @@ public class PatientProfileViewController implements Initializable {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    public void onAddAppointment(ActionEvent actionEvent) {
-        Node source = (Node) actionEvent.getSource();
-        String fxmlFile = "/fxml/appointment-detail-view.fxml";
-        String title = "New appointment | PhysioCare";
-        Utils.switchView(source, fxmlFile, title);
+    public void onAddAppointment(MouseEvent mouseEvent) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
+        Parent root = null;
+        try{
+            root = loader.load();
+        }catch(IOException e){
+            showAlert("ERROR", e.getMessage(), 2);
+        }
+        // Obtener el controlador y pasarle el objeto
+        AppointmentDetailViewController controller = loader.getController();
+        controller.setPatient(patient);
+
+        Node source = (Node) mouseEvent.getSource();
+        String title = "New Appointment| PhysioCare";
+        Utils.switchView(source, root, title);
     }
 
     public void onChangePhotoClick(ActionEvent actionEvent) {
