@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
+import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Patient.Patient;
 import org.example.emailprojectjavafx.models.Patient.PatientListResponse;
 import org.example.emailprojectjavafx.models.Patient.PatientResponse;
@@ -108,22 +109,14 @@ public class PatientsViewController implements Initializable {
     }
 
     private void getPatients() {
-        String url = ServiceUtils.SERVER + "/patients";
-        ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json ->
-                        gson.fromJson(json, PatientListResponse.class)
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() ->
-                                lsPatients.getItems().setAll(response.getPatients())
-                        );
-                    } else {
-                        showAlert("Error", response.getError(), 2);
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to fetch patients", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "patients", "", "GET", null, PatientListResponse.class,
+                patientListResponse -> {
+                    Platform.runLater(() ->
+                            lsPatients.getItems().setAll(patientListResponse.getPatients())
+                    );
+                }, "Failed to fetch patients"
+        ));
     }
 
     /*-----------------------------------------------------------------------------------------*/
@@ -172,8 +165,6 @@ public class PatientsViewController implements Initializable {
     /*-----------------------------------------------------------------------------------------*/
 
     private void postPatient(Patient patient) {
-        String url = ServiceUtils.SERVER + "/patients";
-
         JsonObject patientJson = gson.toJsonTree(patient).getAsJsonObject();
 
         patientJson.addProperty("login", txtLogin.getText());
@@ -181,74 +172,44 @@ public class PatientsViewController implements Initializable {
 
         String jsonRequest = gson.toJson(patientJson);
 
-        ServiceUtils.getResponseAsync(url, jsonRequest, "POST")
-                .thenApply(json -> gson.fromJson(json, PatientResponse.class))
-                .thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Added patient", response.getPatient().getName() + " added", 1);
-                            getPatients();
-                            clearFields();
-                        });
-                    } else {
-                        Platform.runLater(() ->
-                                showAlert("Error creating patient", response.getError(), 2)
-                        );
-                    }
-                })
-                .exceptionally(_ -> {
-                    showAlert("Error", "Failed to add patient", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "patients", "", "POST", jsonRequest, PatientResponse.class,
+                patientResponse -> {
+                    Platform.runLater(() -> {
+                        showAlert("Added patient", patientResponse.getPatient().getName() + " added", 1);
+                        getPatients();
+                        clearFields();
+                    });
+                }, "Failed to add patient"
+        ));
     }
 
     private void modifyPatient(Patient patient) {
-        String url = ServiceUtils.SERVER + "/patients/" + patient.getId();
         String jsonRequest = gson.toJson(patient);
 
-        ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
-                .thenApply(json -> gson.fromJson(json, PatientResponse.class))
-                .thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Updated patient", response.getPatient().getName() + " updated", 1);
-                            getPatients();
-                            clearFields();
-                        });
-                    } else {
-                        Platform.runLater(() ->
-                                showAlert("Error modifying patient", response.getError(), 2)
-                        );
-                    }
-
-                })
-                .exceptionally(_ -> {
-                    showAlert("Error", "Failed to update patient", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "patients", "", "PUT", jsonRequest, PatientResponse.class,
+                patientResponse -> {
+                    Platform.runLater(() -> {
+                        showAlert("Updated patient", patientResponse.getPatient().getName() + " updated", 1);
+                        getPatients();
+                        clearFields();
+                    });
+                }, "Failed to update patient"
+        ));
     }
 
     private void deletePatient(Patient patient) {
-        String url = ServiceUtils.SERVER + "/patients/" + patient.getId();
-        String jsonRequest = "";
-
-        ServiceUtils.getResponseAsync(url, jsonRequest, "DELETE")
-                .thenApply(json -> gson.fromJson(json, PatientResponse.class))
-                .thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Deleted Patient", response.getPatient().getName() + " deleted", 1);
-                            getPatients();
-                            clearFields();
-                        });
-                    } else {
-                        Platform.runLater(() -> showAlert("Error deleting patient", response.getError(), 2));
-                    }
-                })
-                .exceptionally(_ -> {
-                    showAlert("Error", "Failed to delete patient", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "patients", patient.getId(), "DELETE", null, PatientResponse.class,
+                patientResponse -> {
+                    Platform.runLater(() -> {
+                        showAlert("Deleted Patient", patientResponse.getPatient().getName() + " deleted", 1);
+                        getPatients();
+                        clearFields();
+                    });
+                }, "Failed to delete patient"
+        ));
     }
 
     /*-----------------------------------------------------------------------------------------*/

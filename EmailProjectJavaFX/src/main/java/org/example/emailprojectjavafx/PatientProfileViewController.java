@@ -164,7 +164,7 @@ public class PatientProfileViewController implements Initializable {
         }catch(IOException e){
             showAlert("ERROR", e.getMessage(), 2);
         }
-        // Obtener el controlador y pasarle el objeto
+
         AppointmentDetailViewController controller = loader.getController();
         controller.setPatient(patient);
 

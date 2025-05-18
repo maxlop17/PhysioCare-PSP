@@ -3,6 +3,8 @@ package org.example.emailprojectjavafx.utils.services;
 import com.google.gson.Gson;
 import org.example.emailprojectjavafx.models.Auth.AuthResponse;
 import org.example.emailprojectjavafx.models.Auth.LoginRequest;
+import org.example.emailprojectjavafx.models.BaseResponse;
+import org.example.emailprojectjavafx.models.GenericPetition;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -11,18 +13,13 @@ import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 
+import static org.example.emailprojectjavafx.utils.Utils.showAlert;
+import static org.example.emailprojectjavafx.utils.services.TokenUtils.token;
+import static org.example.emailprojectjavafx.utils.services.TokenUtils.tokenPath;
+
 public class ServiceUtils {
-    private static String token = null;
-    //public static final String SERVER = "http://localhost:8080/";
     public static final String SERVER = "https://gloriaarnau.site";
-
-    public static void setToken(String token) {
-        ServiceUtils.token = token;
-    }
-
-    public static void removeToken() {
-        ServiceUtils.token = null;
-    }
+    private static Gson gson = new Gson();
 
     public static boolean login(String username, String password) {
         try {
@@ -31,7 +28,9 @@ public class ServiceUtils {
 
             AuthResponse authResponse = new Gson().fromJson(jsonResponse, AuthResponse.class);
             if (authResponse != null && authResponse.isOk()) {
-                setToken(authResponse.getToken());
+                TokenUtils.setToken(authResponse.getToken());
+                TokenUtils.saveToken(authResponse.getToken(), tokenPath);
+                TokenUtils.decodeToken();
                 return true;
             }
 
@@ -40,6 +39,27 @@ public class ServiceUtils {
         }
         return false;
     }
+
+    /**
+     * Generic method to make a petition to the api, uses consumer to
+     * @param <T>
+     */
+    public static <T extends BaseResponse> void makePetition(GenericPetition<T> petition){
+        String url = ServiceUtils.SERVER + "/" + petition.getModel() + "/" + petition.getPetition();
+        ServiceUtils.getResponseAsync(url, petition.getData(), petition.getMethod())
+                .thenApply(json -> gson.fromJson(json, petition.getResponseClass())
+                ).thenAccept(response -> {
+                    if (response.isOk()) {
+                        petition.getOnSuccess().accept(response);
+                    } else {
+                        showAlert("Error", response.getError(), 2);
+                    }
+                }).exceptionally(_ -> {
+                    showAlert("Error", petition.getErrorMessage(), 2);
+                    return null;
+                });
+    }
+
 
     // Get charset encoding (UTF-8, ISO,...)
     public static String getCharset(String contentType) {
@@ -75,6 +95,11 @@ public class ServiceUtils {
             }
 
             if (data != null) {
+                /*
+                if(image != null){
+                    String boundary = Long.toHexString(System.currentTimeMillis());
+                    conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+                }*/
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 conn.setRequestProperty("Content-Length", Integer.toString(data.length()));
                 conn.setDoOutput(true);

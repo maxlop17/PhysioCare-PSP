@@ -14,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioListResponse;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
@@ -82,22 +83,15 @@ public class PhysiosViewController implements Initializable {
     }
 
     private void getPhysios() {
-        String url = ServiceUtils.SERVER + "/physios";
-        ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json ->
-                        gson.fromJson(json, PhysioListResponse.class)
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() ->
-                                lsPhysios.getItems().setAll(response.getPhysios())
-                        );
-                    } else {
-                        showAlert("Error", response.getError(), 2);
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to fetch physios", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "physios", "",
+                "GET", null, PhysioListResponse.class,
+                physioListResponse -> {
+                    Platform.runLater(() ->
+                            lsPhysios.getItems().setAll(physioListResponse.getPhysios())
+                    );
+                }, "Failed to fetch physios"
+        ));
     }
 
     public void onAddPhysio() {
@@ -145,7 +139,6 @@ public class PhysiosViewController implements Initializable {
 
     private void postPhysio(Physio physio) {
         btnAdd.setDisable(true);
-        String url = ServiceUtils.SERVER + "/physios";
         JsonObject physioJson = gson.toJsonTree(physio).getAsJsonObject();
 
         physioJson.addProperty("login", txtLogin.getText());
@@ -153,79 +146,52 @@ public class PhysiosViewController implements Initializable {
 
         String jsonRequest = gson.toJson(physioJson);
 
-        ServiceUtils.getResponseAsync(url, jsonRequest, "POST")
-                .thenApply(json -> gson.fromJson(json, PhysioResponse.class))
-                .thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Physio added", response.getPhysio().getName() + " added", 1);
-                            getPhysios();
-                            clearFields();
-                            btnAdd.setDisable(false);
-                        });
-                    } else {
-                        Platform.runLater(() ->
-                                showAlert("Error creating physio", response.getError(), 2)
-                        );
-                    }
-                })
-                .exceptionally(_ -> {
-                    showAlert("Error", "Failed to add physio", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "physios", "",
+                "POST", jsonRequest, PhysioResponse.class,
+                physioResponse -> {
+                    Platform.runLater(() -> {
+                        showAlert("Physio added", physioResponse.getPhysio().getName() + " added", 1);
+                        getPhysios();
+                        clearFields();
+                        btnAdd.setDisable(false);
+                    });
+                }, "Failed to add physio"
+        ));
     }
 
     private void modifyPhysio(Physio physio) {
         btnUpdate.setDisable(true);
-        String url = ServiceUtils.SERVER + "/physios/" + physio.getId();
         String jsonRequest = gson.toJson(physio);
 
-        ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
-                .thenApply(json -> gson.fromJson(json, PhysioResponse.class))
-                .thenAccept(response -> {
-                    if (!response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Physio updated", response.getPhysio().getName() + " updated", 1);
-                            getPhysios();
-                            btnUpdate.setDisable(false);
-                            clearFields();
-                        });
-                    } else {
-                        Platform.runLater(() ->
-                                showAlert("Error modifying physio", response.getError(), 2)
-                        );
-                    }
-
-                })
-                .exceptionally(_ -> {
-                    showAlert("Error", "Failed to update physio", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "physios", physio.getId(),
+                "PUT", jsonRequest, PhysioResponse.class,
+                physioResponse -> {
+                    Platform.runLater(() -> {
+                        showAlert("Physio updated", physioResponse.getPhysio().getName() + " updated", 1);
+                        getPhysios();
+                        btnUpdate.setDisable(false);
+                        clearFields();
+                    });
+                }, "Failed to modifying physio"
+        ));
     }
 
     private void deletePhysio(Physio physio) {
         btnDelete.setDisable(true);
-        String url = ServiceUtils.SERVER + "/physios/" + physio.getId();
-        String jsonRequest = "";
-
-        ServiceUtils.getResponseAsync(url, jsonRequest, "DELETE")
-                .thenApply(json -> gson.fromJson(json, PhysioResponse.class))
-                .thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            showAlert("Physio deleted", response.getPhysio().getName() + " deleted", 1);
-                            getPhysios();
-                            btnDelete.setDisable(false);
-                            clearFields();
-                        });
-                    } else {
-                        Platform.runLater(() -> showAlert("Error deleting physio", response.getError(), 2));
-                    }
-                })
-                .exceptionally(_ -> {
-                    showAlert("Error", "Failed to delete physio", 2);
-                    return null;
-                });
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "physios", physio.getId(),
+                "DELETE", null, PhysioResponse.class,
+                physioResponse -> {
+                    Platform.runLater(() -> {
+                        showAlert("Physio deleted", physioResponse.getPhysio().getName() + " deleted", 1);
+                        getPhysios();
+                        btnDelete.setDisable(false);
+                        clearFields();
+                    });
+                }, "Failed to delete physio"
+        ));
     }
 
     /*----------------------------------------------------------------------------------------------*/
