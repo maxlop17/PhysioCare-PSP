@@ -1,6 +1,7 @@
 package org.example.emailprojectjavafx;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -52,11 +53,11 @@ public class PatientsViewController implements Initializable {
     @FXML
     private ListView<Patient> lsPatients;
     @FXML
-    private Button btnDelete;
+    private TextField txtLogin;
     @FXML
-    private Button btnAdd;
-    @FXML
-    private Button btnUpdate;
+    private TextField txtPassword;
+
+
     Gson gson = new Gson();
 
     @Override
@@ -89,8 +90,8 @@ public class PatientsViewController implements Initializable {
         lsPatients.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(mouseEvent.getClickCount() == 2){
-                    if(lsPatients.getSelectionModel().getSelectedItem() != null) {
+                if (mouseEvent.getClickCount() == 2) {
+                    if (lsPatients.getSelectionModel().getSelectedItem() != null) {
                         try {
                             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/patient-profile-view.fxml"));
                             Parent root = loader.load();
@@ -99,7 +100,6 @@ public class PatientsViewController implements Initializable {
                             switchView((Node) mouseEvent.getSource(), root, "Patient | PhysioCare");
                         } catch (IOException e) {
                             Utils.showAlert("Error", "Error getting the profile", 2);
-                            System.out.println(e.getMessage());
                         }
                     }
                 }
@@ -165,8 +165,15 @@ public class PatientsViewController implements Initializable {
     /*-----------------------------------------------------------------------------------------*/
 
     private void postPatient(Patient patient) {
+        JsonObject patientJson = gson.toJsonTree(patient).getAsJsonObject();
+
+        patientJson.addProperty("login", txtLogin.getText());
+        patientJson.addProperty("password", txtPassword.getText());
+
+        String jsonRequest = gson.toJson(patientJson);
+
         ServiceUtils.makePetition(new GenericPetition<>(
-                "patients", "", "POST", patientToJson(patient), PatientResponse.class,
+                "patients", "", "POST", jsonRequest, PatientResponse.class,
                 patientResponse -> {
                     Platform.runLater(() -> {
                         showAlert("Added patient", patientResponse.getPatient().getName() + " added", 1);
@@ -177,13 +184,11 @@ public class PatientsViewController implements Initializable {
         ));
     }
 
-    private String patientToJson(Patient patient) {
-        return gson.toJson(patient);
-    }
-
     private void modifyPatient(Patient patient) {
+        String jsonRequest = gson.toJson(patient);
+
         ServiceUtils.makePetition(new GenericPetition<>(
-                "patients", "", "PUT", patientToJson(patient), PatientResponse.class,
+                "patients", "", "PUT", jsonRequest, PatientResponse.class,
                 patientResponse -> {
                     Platform.runLater(() -> {
                         showAlert("Updated patient", patientResponse.getPatient().getName() + " updated", 1);
@@ -195,9 +200,6 @@ public class PatientsViewController implements Initializable {
     }
 
     private void deletePatient(Patient patient) {
-        String url = ServiceUtils.SERVER + "/patients/" + patient.getId();
-        String jsonRequest = "";
-
         ServiceUtils.makePetition(new GenericPetition<>(
                 "patients", patient.getId(), "DELETE", null, PatientResponse.class,
                 patientResponse -> {
@@ -218,6 +220,8 @@ public class PatientsViewController implements Initializable {
         txtAddress.clear();
         txtInsuranceNumber.clear();
         txtEmail.clear();
+        txtLogin.clear();
+        txtPassword.clear();
         dpBirthDate.setValue(null);
         lsPatients.getSelectionModel().clearSelection();
     }
@@ -229,9 +233,11 @@ public class PatientsViewController implements Initializable {
         String insuranceNumber = txtInsuranceNumber.getText();
         String email = txtEmail.getText();
         LocalDate localDate = dpBirthDate.getValue();
+        String login = txtLogin.getText();
+        String password = txtPassword.getText();
 
         if (patientName.isEmpty() || surname.isEmpty() || address.isEmpty()
-                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null) {
+                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null || login.isEmpty() || password.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
             return null;
         }
