@@ -4,23 +4,25 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
 public class SftpUtils {
     /**
      * Method that connects to the server through SFTP with the provided credentials
-     * @param server with the name of the server address to connect to
-     * @param user with the username to do the login process
-     * @param pass with the password associated to the username
      * @return the ChannelSftp with the connection to the session of JSch
      * @throws Exception if the connection was unsuccessful
      */
-    public static ChannelSftp connectSFTP(String server, String user, String pass) throws Exception {
+    public static ChannelSftp connectSFTP() throws Exception {
         Session session;
         Channel channel;
         ChannelSftp sftpChannel;
+        Dotenv env = Dotenv.load();
+        String user = env.get("SFTP_USER");
+        String pass = env.get("SFTP_PASSWORD");
         try {
             JSch jsch = new JSch();
-            session = jsch.getSession(user, server, 22);
+            session = jsch.getSession(user, ServiceUtils.SERVER, 22);
             session.setPassword(pass);
             // Configuration to not validate the host key
             session.setConfig("StrictHostKeyChecking", "no");
