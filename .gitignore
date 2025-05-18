@@ -2,6 +2,8 @@
 *.class
 tokens/
 
+.env
+
 # Log file
 *.log
 
