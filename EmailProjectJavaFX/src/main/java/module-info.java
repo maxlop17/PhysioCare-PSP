@@ -15,6 +15,7 @@ module org.example.emailprojectjavafx {
     requires com.google.gson;
     requires javafx.graphics;
     requires com.auth0.jwt;
+    requires com.jcraft.jsch;
 
     opens org.example.emailprojectjavafx to javafx.fxml;
     exports org.example.emailprojectjavafx;

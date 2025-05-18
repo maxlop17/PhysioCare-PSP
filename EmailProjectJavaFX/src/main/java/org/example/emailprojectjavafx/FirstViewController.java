@@ -45,4 +45,8 @@ public class FirstViewController {
         String title = "Login | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
     }
+
+    public void uploadRecordsFTP(){
+
+    }
 }
