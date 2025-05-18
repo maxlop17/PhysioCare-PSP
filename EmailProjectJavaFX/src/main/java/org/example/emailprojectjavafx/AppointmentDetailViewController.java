@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 
 import static org.example.emailprojectjavafx.utils.Utils.showAlert;
 
-public class AppointmentDetailViewController implements Initializable{
+public class AppointmentDetailViewController implements Initializable {
     @FXML
     public DatePicker dpDate;
     @FXML
@@ -50,11 +50,6 @@ public class AppointmentDetailViewController implements Initializable{
     private Patient patient = null;
     private Physio physio = null;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-    }
-
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
         fillData();
@@ -68,6 +63,13 @@ public class AppointmentDetailViewController implements Initializable{
     public void setPhysio(Physio physio) {
         this.physio = physio;
         this.patient = null;
+    }
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        if(appointment == null){
+            appointment = new Appointment();
+            fillData();
+        }
     }
 
 
@@ -227,6 +229,5 @@ public class AppointmentDetailViewController implements Initializable{
                     return null;
                 });
     }
-
 
 }

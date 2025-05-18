@@ -34,4 +34,14 @@ public class MainApplication extends Application {
     public static void main(String[] args) {
         launch();
     }
+
+
+    /*
+
+    COSAS QUE HAY QUE MIRARa
+    Al updatear un patient se updatea pero no cambia la listview ni sale ningun mensaje, hay que salir y volver a entrar
+    Al updatear un physio se updatea pero no cambia la listview ni sale ningun mensaje, hay que salir y volver a entrar
+
+
+    */
 }

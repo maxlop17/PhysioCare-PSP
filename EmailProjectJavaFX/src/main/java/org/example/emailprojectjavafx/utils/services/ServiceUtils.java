@@ -1,23 +1,16 @@
 package org.example.emailprojectjavafx.utils.services;
 
 import com.google.gson.Gson;
-import jakarta.mail.internet.HeaderTokenizer;
 import org.example.emailprojectjavafx.models.Auth.AuthResponse;
 import org.example.emailprojectjavafx.models.Auth.LoginRequest;
 import org.example.emailprojectjavafx.models.BaseResponse;
 import org.example.emailprojectjavafx.models.GenericPetition;
-import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
 import static org.example.emailprojectjavafx.utils.Utils.showAlert;
