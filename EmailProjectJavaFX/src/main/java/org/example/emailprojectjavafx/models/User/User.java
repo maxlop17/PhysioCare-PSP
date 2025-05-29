@@ -1,15 +1,19 @@
 package org.example.emailprojectjavafx.models.User;
 
+import com.google.gson.annotations.SerializedName;
+
 public class User {
+    @SerializedName("_id")
     private String id;
-    private String username;
-    private String role;
+    private String login;
+    private String rol;
     private String avatar;
+    private String password;
 
     public User(String id, String username, String role, String avatar) {
         this.id = id;
-        this.username = username;
-        this.role = role;
+        this.login = username;
+        this.rol = role;
         this.avatar = avatar;
     }
 
@@ -21,20 +25,20 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getLogin() {
+        return login;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public String getRole() {
-        return role;
+    public String getRol() {
+        return rol;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public String getAvatar() {
@@ -43,5 +47,13 @@ public class User {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

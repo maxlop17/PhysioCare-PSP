@@ -6,12 +6,13 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import org.example.emailprojectjavafx.models.Patient.Patient;
 import org.example.emailprojectjavafx.models.Record.Record;
+import org.example.emailprojectjavafx.utils.Utils;
 
 public class MedicalRecordPDF {
 
-    public static void printMedicalRecord(String dest, Record record, Patient patient) {
+    public static void printMedicalRecord(String filename, Record record, Patient patient) {
         try {
-            PdfWriter writer = new PdfWriter(dest);
+            PdfWriter writer = new PdfWriter("src/main/resources/records/" + filename + ".pdf");
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
@@ -22,9 +23,10 @@ public class MedicalRecordPDF {
             document.add(new Paragraph("Date of birth: " + patient.getBirthDate()));
             document.add(new Paragraph("Medical Record: " + record.getMedicalRecord()));
             document.close();
+
             System.out.println("PDF Created");
         } catch (Exception e) {
-            e.printStackTrace();
+            Utils.showAlert("Error", "There was an error creating the document", 2);
         }
     }
 }

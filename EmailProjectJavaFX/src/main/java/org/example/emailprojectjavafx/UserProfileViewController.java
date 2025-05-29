@@ -21,7 +21,6 @@ import org.example.emailprojectjavafx.utils.services.TokenUtils;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.util.ResourceBundle;
 
 public class UserProfileViewController implements Initializable {
@@ -47,7 +46,7 @@ public class UserProfileViewController implements Initializable {
         } catch (Exception e) {
             System.out.println("Error getting user from token: " + e.getMessage());
         }
-        if(user.getRole().equals("physio")){
+        if(user.getRol().equals("physio")){
             ServiceUtils.makePetition(new GenericPetition<>(
                     "physios", user.getId(), "GET", null, PhysioResponse.class,
                     physioResponse -> physio = physioResponse.getPhysio(), "Failed to fetch physio"
@@ -59,9 +58,9 @@ public class UserProfileViewController implements Initializable {
         } else {
             imgAvatar.setImage(new Image(String.valueOf(getClass().getResource("/images/user_placeholder.png"))));
         }
-        lblUsernameInfo.setText(user.getUsername());
-        lblUsername.setText(user.getUsername());
-        lblRole.setText(user.getRole());
+        lblUsernameInfo.setText(user.getLogin());
+        lblUsername.setText(user.getLogin());
+        lblRole.setText(user.getRol());
     }
 
     public void onLogoutClick(ActionEvent actionEvent) {

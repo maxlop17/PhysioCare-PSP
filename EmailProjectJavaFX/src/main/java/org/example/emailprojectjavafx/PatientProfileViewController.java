@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -25,6 +26,7 @@ import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.models.Record.Record;
 import org.example.emailprojectjavafx.models.Record.RecordListResponse;
+import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
@@ -54,7 +56,6 @@ public class PatientProfileViewController implements Initializable {
     public ListView<Appointment> lvAppointments;
     public Patient patient;
     public ImageView imgProfile;
-    Gson gson = new Gson();
 
     public void setPatient(Patient patient) {
         this.patient = patient;
@@ -113,6 +114,20 @@ public class PatientProfileViewController implements Initializable {
             lblAddress.setText(patient.getAddress());
             lblEmail.setText(patient.getEmail());
             lblInsurance.setText(patient.getInsuranceNumber());
+            ServiceUtils.makePetition(new GenericPetition<>(
+                    "users", patient.getId(), "GET", null, UserResponse.class,
+                    userResponse -> {
+                        Platform.runLater(() -> {
+                            String avatar = userResponse.getUser().getAvatar();
+                            if(avatar != null && !avatar.isEmpty()){
+                                imgProfile.setImage(new Image(avatar));
+                            } else {
+                                imgProfile.setImage(new Image(String.valueOf(getClass().getResource("/images/user_placeholder.png"))));
+                            }
+                        });
+                    }, "Failed to fetch user"
+            ));
+
             getAppointments();
         }
     }

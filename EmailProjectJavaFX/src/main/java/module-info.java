@@ -17,6 +17,7 @@ module org.example.emailprojectjavafx {
     requires com.auth0.jwt;
     requires com.jcraft.jsch;
     requires java.dotenv;
+    requires org.apache.commons.net;
 
     opens org.example.emailprojectjavafx to javafx.fxml;
     exports org.example.emailprojectjavafx;

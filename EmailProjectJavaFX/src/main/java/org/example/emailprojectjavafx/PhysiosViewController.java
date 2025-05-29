@@ -18,6 +18,8 @@ import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioListResponse;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
+import org.example.emailprojectjavafx.models.Physio.UpdatePhysio;
+import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
@@ -40,8 +42,7 @@ public class PhysiosViewController implements Initializable {
     @FXML
     private TextField txtLogin;
     @FXML
-    private TextField txtPassword;
-
+    private PasswordField txtPassword;
 
     @FXML
     private ListView<Physio> lsPhysios;
@@ -70,6 +71,14 @@ public class PhysiosViewController implements Initializable {
                             txtLicenseNumber.setText(t2.getLicenseNumber());
                             txtEmail.setText(t2.getEmail());
                             cbSpecialization.setValue(t2.getSpecialty());
+                            ServiceUtils.makePetition(new GenericPetition<>(
+                                    "users", t2.getId(), "GET", null, UserResponse.class,
+                                    userResponse -> {
+                                        Platform.runLater(() -> {
+                                            txtLogin.setText(userResponse.getUser().getLogin());
+                                        });
+                                    }, "Failed to fetch user"
+                            ));
                         } else {
                             txtName.setText("");
                             txtSurname.setText("");
@@ -162,7 +171,8 @@ public class PhysiosViewController implements Initializable {
 
     private void modifyPhysio(Physio physio) {
         btnUpdate.setDisable(true);
-        String jsonRequest = gson.toJson(physio);
+        UpdatePhysio up = new UpdatePhysio(physio, txtLogin.getText(), txtPassword.getText());
+        String jsonRequest = gson.toJson(up);
 
         ServiceUtils.makePetition(new GenericPetition<>(
                 "physios", physio.getId(),

@@ -41,9 +41,6 @@
                             <!-- Imagen de perfil -->
                             <StackPane>
                                 <ImageView fx:id="imgProfile" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@/images/user_placeholder.png" />
-                                    </image>
                                     <effect>
                                         <DropShadow color="#00000033" radius="5.0" />
                                     </effect>
