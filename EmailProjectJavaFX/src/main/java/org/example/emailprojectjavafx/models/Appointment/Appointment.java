@@ -105,16 +105,18 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return "Appointment{" +
-                "id='" + id + '\'' +
-                ", date=" + date +
-                ", physio='" + physio + '\'' +
-                ", diagnosis='" + diagnosis + '\'' +
-                ", treatment='" + treatment + '\'' +
-                ", observations='" + observations + '\'' +
-                ", confirmed=" + confirmed +
-                ", price=" + price +
-                '}';
+        return String.format(
+                "ID: %s | Date: %s | Physio: %s | Diagnosis: %s | Treatment: %s | Observations: %s | Confirmed: %s | Price: %.2f€",
+                id,
+                date,
+                physio,
+                diagnosis,
+                treatment,
+                observations,
+                confirmed ? "Yes" : "No",
+                price
+        );
     }
+
 }
 
