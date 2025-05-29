@@ -222,12 +222,13 @@ public class PhysiosViewController implements Initializable {
         String surname = txtSurname.getText();
         String licenseNumber = txtLicenseNumber.getText();
         String email = txtEmail.getText();
-        String specialty = cbSpecialization.getValue().toLowerCase();
+        String specialty = cbSpecialization.getValue();
         String login = txtLogin.getText();
         String password = txtPassword.getText();
 
 
-        if (name.isEmpty() || surname.isEmpty() || licenseNumber.isEmpty() || email.isEmpty() || specialty.isEmpty()) {
+        if (name.isEmpty() || surname.isEmpty() || licenseNumber.isEmpty() || email.isEmpty()
+                || specialty == null || specialty.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
             return null;
         }
@@ -238,7 +239,7 @@ public class PhysiosViewController implements Initializable {
         }
 
 
-        return new Physio(name, surname, licenseNumber, specialty, email);
+        return new Physio(name, surname, licenseNumber, specialty.toLowerCase(), email);
     }
 
 

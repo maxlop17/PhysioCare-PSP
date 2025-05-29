@@ -46,7 +46,7 @@ public class AppointmentDetailViewController implements Initializable {
     public Spinner<Double> numPrice;
 
     private Appointment appointment;
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
     private Patient patient = null;
     private Physio physio = null;
 
@@ -66,6 +66,7 @@ public class AppointmentDetailViewController implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        System.out.println(appointment);
         if(appointment == null){
             appointment = new Appointment();
             fillData();

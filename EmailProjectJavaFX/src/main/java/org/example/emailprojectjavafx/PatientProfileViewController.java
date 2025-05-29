@@ -10,12 +10,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
@@ -26,6 +26,8 @@ import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.models.Record.Record;
 import org.example.emailprojectjavafx.models.Record.RecordListResponse;
+import org.example.emailprojectjavafx.models.Record.RecordRequest;
+import org.example.emailprojectjavafx.models.Record.RecordResponse;
 import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
@@ -54,8 +56,16 @@ public class PatientProfileViewController implements Initializable {
     public Label lblRecord;
     @FXML
     public ListView<Appointment> lvAppointments;
+    @FXML
+    public VBox vBoxContainer;
+    @FXML
+    public Button btnCreateRecord;
+    @FXML
+    public Button btnAddAppointment;
+    public TextField txtRecord = new TextField();
     public Patient patient;
     public ImageView imgProfile;
+    private Gson gson = new Gson();
 
     public void setPatient(Patient patient) {
         this.patient = patient;
@@ -64,6 +74,7 @@ public class PatientProfileViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        btnCreateRecord.setDisable(true);
         //Configuration to change the window on double click to the appointment
         lvAppointments.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -110,7 +121,7 @@ public class PatientProfileViewController implements Initializable {
         if(patient != null) {
             lblName.setText(patient.getName());
             lblSurname.setText(patient.getSurname());
-            lblBirthdate.setText(String.valueOf(patient.getBirthDate()));
+            lblBirthdate.setText(new SimpleDateFormat("dd/MM/yyyy").format(patient.getBirthDate()));
             lblAddress.setText(patient.getAddress());
             lblEmail.setText(patient.getEmail());
             lblInsurance.setText(patient.getInsuranceNumber());
@@ -132,26 +143,41 @@ public class PatientProfileViewController implements Initializable {
         }
     }
 
-    private void getAppointments(){
-        ServiceUtils.makePetition(new GenericPetition<>(
-                "records", patient.getId( )+ "/patient", "GET", null, RecordListResponse.class,
-                recordListResponse -> {
-                    Record record = recordListResponse.getRecords().getFirst();
-                    lblRecord.setText(record.getMedicalRecord());
-                    System.out.println(record.getAppointments());
-                    record.getAppointments().forEach(this::getAppointmentById);
-                }, "Failed to fetch appointments"
-        ));
+    private void changeButtonsRecord(Boolean recordExists){
+        if(recordExists){
+            int indexRecordText = vBoxContainer.getChildren().indexOf(txtRecord);
+            vBoxContainer.getChildren().remove(indexRecordText);
+            vBoxContainer.getChildren().add(indexRecordText, lblRecord);
+            btnCreateRecord.setDisable(true);
+            btnAddAppointment.setDisable(false);
+        } else {
+            txtRecord.setPromptText("Insert the medical record");
+            txtRecord.setStyle("-fx-font-size: 18px; -fx-text-fill: #3498db;");
+
+            int indexRecordText = vBoxContainer.getChildren().indexOf(lblRecord);
+            vBoxContainer.getChildren().remove(indexRecordText);
+            vBoxContainer.getChildren().add(indexRecordText, txtRecord);
+            btnAddAppointment.setDisable(true);
+            btnCreateRecord.setDisable(false);
+        }
     }
 
-    private void getAppointmentById(String id){
+    private void getAppointments(){
         ServiceUtils.makePetition(new GenericPetition<>(
-                "records", "/appointments/" + id, "GET", null, AppointmentResponse.class,
-                appointmentResponse -> {
+                "records", patient.getId()+ "/patient", "GET", null, RecordListResponse.class,
+                recordListResponse -> {
                     Platform.runLater(() -> {
-                        lvAppointments.getItems().add(appointmentResponse.getAppointment());
+                        if(recordListResponse.getRecords() == null){
+                            changeButtonsRecord(false);
+                        } else {
+                            Record record = recordListResponse.getRecords().getFirst();
+                            lblRecord.setText(record.getMedicalRecord());
+                            if (!record.getAppointments().isEmpty()) {
+                                lvAppointments.getItems().addAll(record.getAppointments());
+                            }
+                        }
                     });
-                }, "Failed to fetch appointment"
+                }, "Failed to fetch appointments"
         ));
     }
 
@@ -189,5 +215,23 @@ public class PatientProfileViewController implements Initializable {
     }
 
     public void onChangePhotoClick(ActionEvent actionEvent) {
+    }
+
+    public void onCreateRecord(ActionEvent actionEvent) {
+        if(!txtRecord.getText().isEmpty()){
+            String jsonRequest = gson.toJson(new RecordRequest(patient.getId(), txtRecord.getText()));
+            ServiceUtils.makePetition(new GenericPetition<>(
+                    "records", "", "POST", jsonRequest, RecordResponse.class,
+                    recordListResponse -> {
+                        Platform.runLater(() -> {
+                            changeButtonsRecord(true);
+                            Record record = recordListResponse.getRecord();
+                            lblRecord.setText(record.getMedicalRecord());
+                        });
+                    }, "Failed to fetch appointments"
+            ));
+        } else {
+            Utils.showAlert("Warning", "Please, fill the medical record to create a new Record", 2);
+        }
     }
 }

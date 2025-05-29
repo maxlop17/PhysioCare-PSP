@@ -29,7 +29,7 @@
         <HBox spacing="10.0" VBox.vgrow="ALWAYS">
             <children>
                 <!-- Panel izquierdo - Información del fisioterapeuta -->
-                <VBox minWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                <VBox fx:id="vBoxContainer" minWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
                     <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                     </padding>
@@ -61,47 +61,65 @@
                             </VBox>
                         </HBox>
 
-                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                        <ScrollPane fitToWidth="true" prefHeight="587.0" prefWidth="537.0" style="-fx-background-color: transparent; -fx-border-color: transparent;">
                             <content>
-                                <GridPane hgap="15.0" vgap="15.0">
+                                <GridPane hgap="15.0" prefHeight="316.0" prefWidth="533.0" vgap="20.0">
                                     <columnConstraints>
                                         <ColumnConstraints hgrow="NEVER" minWidth="120.0" />
                                         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
                                     </columnConstraints>
 
                                     <!-- Nombre -->
-                                    <Label style="-fx-font-weight: bold;" text="Name:" GridPane.columnIndex="0" />
+                                    <Label style="-fx-font-weight: bold;" text="Name:" GridPane.columnIndex="0">
+                              <padding>
+                                 <Insets left="5.0" />
+                              </padding></Label>
                                     <Label fx:id="lblName" text="[Name will appear here]" GridPane.columnIndex="1" />
 
                                     <!-- Apellidos -->
-                                    <Label style="-fx-font-weight: bold;" text="Surname:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                    <Label style="-fx-font-weight: bold;" text="Surname:" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                              <padding>
+                                 <Insets left="5.0" />
+                              </padding></Label>
                                     <Label fx:id="lblSurname" text="[Surname will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                     <!-- Especialización -->
-                                    <Label style="-fx-font-weight: bold;" text="Birthdate" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                    <Label style="-fx-font-weight: bold;" text="Birthdate" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                              <padding>
+                                 <Insets left="5.0" />
+                              </padding></Label>
                                     <Label fx:id="lblBirthdate" text="[Spe will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                     <!-- Número de Licencia -->
-                                    <Label style="-fx-font-weight: bold;" text="Insurance Number:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                    <Label style="-fx-font-weight: bold;" text="Insurance Number:" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                              <padding>
+                                 <Insets left="5.0" />
+                              </padding></Label>
                                     <Label fx:id="lblInsurance" text="[License number will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                                     <!-- Email -->
-                                    <Label style="-fx-font-weight: bold;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                    <Label style="-fx-font-weight: bold;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                              <padding>
+                                 <Insets left="5.0" />
+                              </padding></Label>
                                     <Label fx:id="lblEmail" text="[Email will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                     <Label text="Address:" GridPane.rowIndex="5">
                                         <font>
                                             <Font name="System Bold" size="12.0" />
                                         </font>
+                              <padding>
+                                 <Insets left="5.0" />
+                              </padding>
                                     </Label>
-                                    <Label fx:id="lblAddress" text="[Address will apear here]" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="lblAddress" prefHeight="43.0" prefWidth="142.0" text="[Address will apear here]" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
                                     <rowConstraints>
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                        <RowConstraints maxHeight="28.333316167195637" minHeight="16.666683832804363" prefHeight="24.0" />
+                                        <RowConstraints maxHeight="49.999982833862305" minHeight="6.333350499471024" prefHeight="24.000003814697266" />
+                                        <RowConstraints maxHeight="59.66666666666666" minHeight="1.4210854715202004E-14" prefHeight="25.0" />
+                                        <RowConstraints maxHeight="79.33332570393881" minHeight="4.333356221516937" prefHeight="35.0" />
+                                        <RowConstraints maxHeight="87.33333333333331" minHeight="12.666666666666657" prefHeight="35.66666666666666" />
+                                        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="39.33333333333337" prefHeight="72.0" vgrow="ALWAYS" />
                                     </rowConstraints>
                                 </GridPane>
                             </content>
@@ -111,7 +129,7 @@
                                 <Font size="18.0" />
                             </font>
                         </Label>
-                        <Label fx:id="lblRecord" text="Here goes the medical record" />
+                        <Label fx:id="lblRecord" text="The user does not have a medical record" />
                         <GridPane prefHeight="288.0" prefWidth="298.0">
                             <columnConstraints>
                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="295.0" />
@@ -123,10 +141,11 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <Button mnemonicParsing="false" onAction="#onAddAppointment" prefHeight="38.0" prefWidth="191.0" style="-fx-background-color: #94c973; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Add appointment" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <Button fx:id="btnAddAppointment" mnemonicParsing="false" onAction="#onAddAppointment" prefHeight="38.0" prefWidth="191.0" style="-fx-background-color: #94c973; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Add appointment" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <opaqueInsets>
                                         <Insets />
                                     </opaqueInsets></Button>
+                        <Button fx:id="btnCreateRecord" mnemonicParsing="false" onAction="#onCreateRecord" prefHeight="38.0" prefWidth="191.0" style="-fx-background-color: #2a9ba7; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Create Record" GridPane.rowIndex="2" />
                             </children>
                         </GridPane>
                     </children>
