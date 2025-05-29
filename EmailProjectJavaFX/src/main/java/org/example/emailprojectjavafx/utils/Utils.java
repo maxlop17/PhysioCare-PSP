@@ -29,6 +29,7 @@ public class Utils {
             Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle(title);
             stage.setScene(scene);
+            stage.setFullScreen(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,6 +40,7 @@ public class Utils {
         Stage stage = (Stage) source.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setTitle(title);
+        stage.setFullScreen(true);
         stage.setScene(scene);
         stage.show();
     }

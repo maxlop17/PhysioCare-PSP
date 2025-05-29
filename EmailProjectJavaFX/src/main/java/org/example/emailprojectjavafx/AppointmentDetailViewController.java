@@ -66,13 +66,14 @@ public class AppointmentDetailViewController implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println(appointment);
         if(appointment == null){
+            System.out.println("Nuevo appointment");
             appointment = new Appointment();
+        } else {
             fillData();
+            getPhysios();
         }
     }
-
 
     private void fillData(){
         if(appointment != null){

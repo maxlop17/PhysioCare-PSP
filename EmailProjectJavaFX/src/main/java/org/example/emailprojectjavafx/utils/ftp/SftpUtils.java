@@ -16,7 +16,7 @@ public class SftpUtils {
      * @return the ChannelSftp with the connection to the session of JSch
      * @throws Exception if the connection was unsuccessful
      */
-    public static ChannelSftp connectSFTP() throws Exception {
+    private static ChannelSftp connectSFTP() throws Exception {
         Session session;
         Channel channel;
         ChannelSftp sftpChannel;

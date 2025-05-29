@@ -15,10 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.example.emailprojectjavafx.models.GenericPetition;
-import org.example.emailprojectjavafx.models.Physio.Physio;
-import org.example.emailprojectjavafx.models.Physio.PhysioListResponse;
-import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
-import org.example.emailprojectjavafx.models.Physio.UpdatePhysio;
+import org.example.emailprojectjavafx.models.Physio.*;
 import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
@@ -148,12 +145,8 @@ public class PhysiosViewController implements Initializable {
 
     private void postPhysio(Physio physio) {
         btnAdd.setDisable(true);
-        JsonObject physioJson = gson.toJsonTree(physio).getAsJsonObject();
-
-        physioJson.addProperty("login", txtLogin.getText());
-        physioJson.addProperty("password", txtPassword.getText());
-
-        String jsonRequest = gson.toJson(physioJson);
+        PhysioRequest pr = new PhysioRequest(physio, txtLogin.getText(), txtPassword.getText());
+        String jsonRequest = gson.toJson(pr);
 
         ServiceUtils.makePetition(new GenericPetition<>(
                 "physios", "",
@@ -230,6 +223,11 @@ public class PhysiosViewController implements Initializable {
         if (name.isEmpty() || surname.isEmpty() || licenseNumber.isEmpty() || email.isEmpty()
                 || specialty == null || specialty.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
+            return null;
+        }
+
+        if(!licenseNumber.matches("^[a-zA-Z0-9]{8}$")){
+            showAlert("Error", "The license number must have 8 numbers and/or letters.", 2);
             return null;
         }
 

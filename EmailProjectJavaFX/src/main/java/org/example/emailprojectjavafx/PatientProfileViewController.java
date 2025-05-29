@@ -30,6 +30,7 @@ import org.example.emailprojectjavafx.models.Record.RecordRequest;
 import org.example.emailprojectjavafx.models.Record.RecordResponse;
 import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
+import org.example.emailprojectjavafx.utils.pdf.MedicalRecordPDF;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
 import java.io.IOException;
@@ -84,13 +85,14 @@ public class PatientProfileViewController implements Initializable {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
                         Parent root = loader.load();
                         AppointmentDetailViewController controller = loader.getController();
+                        Node source = (Node) mouseEvent.getSource();
+                        String title =  "Appointment | PhysioCare";
                         controller.setPatient(patient);
                         controller.setAppointment(lvAppointments.getSelectionModel().getSelectedItem());
-                        Stage stage = new Stage();
-                        stage.setScene(new Scene(root));
-                        stage.show();
+                        Utils.switchView(source, root, title);
                     } catch (IOException e) {
                         Utils.showAlert("Error", "Error getting the detail", 2);
+                        e.printStackTrace();
                     }
                 }
             }
@@ -167,7 +169,7 @@ public class PatientProfileViewController implements Initializable {
                 "records", patient.getId()+ "/patient", "GET", null, RecordListResponse.class,
                 recordListResponse -> {
                     Platform.runLater(() -> {
-                        if(recordListResponse.getRecords() == null){
+                        if(recordListResponse.getRecords() == null || recordListResponse.getRecords().isEmpty()){
                             changeButtonsRecord(false);
                         } else {
                             Record record = recordListResponse.getRecords().getFirst();
@@ -191,6 +193,7 @@ public class PatientProfileViewController implements Initializable {
     }
 
     public void onBackButtonClick(ActionEvent actionEvent) {
+        //MedicalRecordPDF.printPatientsRecords();
         Node source = (Node) actionEvent.getSource();
         String fxmlFile = "/fxml/patients-view.fxml";
         String title = "Patients | PhysioCare";
@@ -227,6 +230,7 @@ public class PatientProfileViewController implements Initializable {
                             changeButtonsRecord(true);
                             Record record = recordListResponse.getRecord();
                             lblRecord.setText(record.getMedicalRecord());
+                            MedicalRecordPDF.printPatientsRecords();
                         });
                     }, "Failed to fetch appointments"
             ));
@@ -234,4 +238,5 @@ public class PatientProfileViewController implements Initializable {
             Utils.showAlert("Warning", "Please, fill the medical record to create a new Record", 2);
         }
     }
+
 }

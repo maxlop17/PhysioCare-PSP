@@ -15,10 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.example.emailprojectjavafx.models.GenericPetition;
-import org.example.emailprojectjavafx.models.Patient.Patient;
-import org.example.emailprojectjavafx.models.Patient.PatientListResponse;
-import org.example.emailprojectjavafx.models.Patient.PatientResponse;
-import org.example.emailprojectjavafx.models.Patient.UpdatePatient;
+import org.example.emailprojectjavafx.models.Patient.*;
 import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
@@ -171,12 +168,8 @@ public class PatientsViewController implements Initializable {
     /*-----------------------------------------------------------------------------------------*/
 
     private void postPatient(Patient patient) {
-        JsonObject patientJson = gson.toJsonTree(patient).getAsJsonObject();
-
-        patientJson.addProperty("login", txtLogin.getText());
-        patientJson.addProperty("password", txtPassword.getText());
-
-        String jsonRequest = gson.toJson(patientJson);
+        PatientRequest pr = new PatientRequest(patient, txtLogin.getText(), txtPassword.getText());
+        String jsonRequest = gson.toJson(pr);
 
         ServiceUtils.makePetition(new GenericPetition<>(
                 "patients", "", "POST", jsonRequest, PatientResponse.class,
@@ -244,9 +237,18 @@ public class PatientsViewController implements Initializable {
         String login = txtLogin.getText();
         String password = txtPassword.getText();
 
+        if(localDate.isAfter(LocalDate.now())){
+            showAlert("Error", "The date cannot be in the future.", 2);
+            return null;
+        }
         if (patientName.isEmpty() || surname.isEmpty() || address.isEmpty()
-                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null || login.isEmpty() || password.isEmpty()) {
+                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null ||
+                login.isEmpty() || password.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
+            return null;
+        }
+        if(!insuranceNumber.matches("^\\w{9}$")){
+            showAlert("Error", "The insurance number must have 9 characters.", 2);
             return null;
         }
         Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
