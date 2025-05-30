@@ -235,6 +235,7 @@ public class PatientProfileViewController implements Initializable {
             Utils.switchView(source, root, title);
         }catch(IOException e){
             showAlert("ERROR", e.getMessage(), 2);
+            e.printStackTrace();
         }
     }
 }

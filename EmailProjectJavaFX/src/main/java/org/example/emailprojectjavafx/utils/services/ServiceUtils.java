@@ -52,9 +52,11 @@ public class ServiceUtils {
                     if (response.isOk()) {
                         petition.getOnSuccess().accept(response);
                     } else {
+                        System.out.println(response.getError());
                         showAlert("Error", response.getError(), 2);
                     }
                 }).exceptionally(_ -> {
+                    System.out.println(petition.getErrorMessage());
                     showAlert("Error", petition.getErrorMessage(), 2);
                     return null;
                 });

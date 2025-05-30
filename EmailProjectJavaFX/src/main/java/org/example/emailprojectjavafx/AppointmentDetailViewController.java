@@ -1,6 +1,7 @@
 package org.example.emailprojectjavafx;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import org.example.emailprojectjavafx.models.Patient.Patient;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioListResponse;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
+import org.example.emailprojectjavafx.models.Record.RecordListResponse;
 import org.example.emailprojectjavafx.models.Record.RecordResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
@@ -28,6 +30,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -70,6 +77,7 @@ public class AppointmentDetailViewController implements Initializable {
     public void setPatient(Patient patient) {
         this.patient = patient;
         this.physio = null;
+        getRecordByPatientId();
     }
 
     public void setPhysio(Physio physio) {
@@ -81,10 +89,12 @@ public class AppointmentDetailViewController implements Initializable {
         numPrice.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 1000.0, 0.0, 1.0));
         if(appointment == null){
             appointment = new Appointment();
-        } else {
-            fillData();
         }
         getPhysios();
+        lblConfirmationStatus.setText(PENDING);
+        gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                .create();
     }
 
     private void fillData(){
@@ -102,12 +112,11 @@ public class AppointmentDetailViewController implements Initializable {
             if(appointment.getConfirmed() != null){
                 lblConfirmationStatus.setText(appointment.getConfirmed() ? CONFIRMED : PENDING);
             }
-            getRecordByAppointmentId();
         }
     }
 
     public void onToggleConfirmation(ActionEvent actionEvent) {
-        lblConfirmationStatus.setText(lblConfirmationStatus.equals(CONFIRMED) ? PENDING : CONFIRMED);
+        lblConfirmationStatus.setText(lblConfirmationStatus.getText().equals(CONFIRMED) ? PENDING : CONFIRMED);
     }
 
     public void onBackButtonClick(ActionEvent actionEvent) {
@@ -117,14 +126,16 @@ public class AppointmentDetailViewController implements Initializable {
     public void onAddAppointment(ActionEvent actionEvent) {
         if(appointment.getId() == null || appointment.getId().isEmpty()){
             String jsonRequest = gson.toJson(getValidatedDataFromForm(false));
+            System.out.println(jsonRequest);
             ServiceUtils.makePetition(new GenericPetition<>(
                     "records", record.getId() + "/appointments",
                     "POST", jsonRequest, RecordResponse.class,
                     recordResponse -> {
+                        System.out.println(recordResponse);
                         Platform.runLater(() -> {
-                            showAlert("Appointment created", "Appointment updated", 1);
+                            showAlert("Appointment created", "Appointment created", 1);
+                            changeWindow(actionEvent);
                         });
-                        onBackButtonClick(actionEvent);
                     }, "Failed to create appointment"
             ));
         } else {
@@ -136,17 +147,24 @@ public class AppointmentDetailViewController implements Initializable {
         String diagnosis = txtDiagnosis.getText();
         String treatment = txtTreatment.getText();
         String observations = txtObservations.getText();
-        Date date = toDate(dpDate.getEditor().getText());
+        Date date = toDate();
         Boolean confirmed = lblConfirmationStatus.equals("Appointment confirmed");
         Physio physio = cbPhysio.getSelectionModel().getSelectedItem();
         Double price = numPrice.getValue();
+        System.out.println(date);
 
         if (diagnosis.isEmpty() || treatment.isEmpty() ||
-                price.isNaN() || Objects.requireNonNull(date).before(new Date()) ||
+                price.isNaN() || price < 0 || Objects.requireNonNull(date).before(new Date()) ||
                 physio == null) {
             showAlert("Error", "Please fill all the fields correctly.", 2);
             return null;
         }
+
+        if(diagnosis.split("").length < 10){
+            showAlert("Error", "Diagnosis must be at least 10 characters long", 2);
+            return null;
+        }
+
         if(update && observations.isEmpty()){
             observations = appointment.getObservations();
         }
@@ -155,17 +173,19 @@ public class AppointmentDetailViewController implements Initializable {
 
     /**
      * Method that gets a date in a string format and transforms it to date
-     * @param date the date that needs to be transformed
      * @return the date in Date format
      */
-    private Date toDate (String date) {
+    private Date toDate () {
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            return formatter.parse(date);
-        } catch(ParseException e){
-            showAlert("Error", e.getMessage(), 2);
+            LocalDate date = dpDate.getValue();
+            if (date == null) {
+                throw new IllegalArgumentException("Date not selected.");
+            }
+            return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }catch (Exception e) {
+            showAlert("Error", "The date does not have a proper format.", 2);
+            return null;
         }
-        return null;
     }
 
     public void onUpdateAppointment(ActionEvent actionEvent) {
@@ -177,6 +197,7 @@ public class AppointmentDetailViewController implements Initializable {
                     recordResponse -> {
                         Platform.runLater(() -> {
                             showAlert("Updated appointment", "Appointment updated", 1);
+                            changeWindow(actionEvent);
                         });
                     }, "Failed to fetch appointments"
             ));
@@ -185,12 +206,13 @@ public class AppointmentDetailViewController implements Initializable {
         }
     }
 
-    private void getRecordByAppointmentId(){
+    private void getRecordByPatientId(){
         ServiceUtils.makePetition(new GenericPetition<>(
-                "records", "appointments/" + appointment.getId() + "/record",
-                "GET", null, RecordResponse.class,
+                "records", patient.getId() + "/patient",
+                "GET", null, RecordListResponse.class,
                 recordResponse -> {
-                    record = recordResponse.getRecord();
+                    record = recordResponse.getRecords().getFirst();
+                    System.out.println(record);
                 }, "Failed to fetch record"
         ));
     }
@@ -203,6 +225,7 @@ public class AppointmentDetailViewController implements Initializable {
                     recordResponse -> {
                         Platform.runLater(() -> {
                             showAlert("Deleted Appointment", "Appointment deleted successfully", 1);
+                            changeWindow(actionEvent);
                         });
                     }, "Failed to fetch appointments"
             ));
@@ -253,22 +276,5 @@ public class AppointmentDetailViewController implements Initializable {
         ));
     }
 
-    private void getPatients(){
-        ServiceUtils.makePetition(new GenericPetition<>(
-                "physios", "", "GET", null, PhysioListResponse.class,
-                physioListResponse -> {
-                    Platform.runLater(() -> {
-                        cbPhysio.getItems().addAll(physioListResponse.getPhysios());
-                        if(appointment.getPhysio() != null){
-                            for(Physio p : physioListResponse.getPhysios()){
-                                if(p.getId().equals(appointment.getPhysio())){
-                                    cbPhysio.getSelectionModel().select(p);
-                                }
-                            }
-                        }
-                    });
-                }, "Failed to fetch physios"
-        ));
-    }
 
 }
