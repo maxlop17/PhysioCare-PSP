@@ -19,13 +19,24 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import org.example.emailprojectjavafx.models.Appointment.Appointment;
+import org.example.emailprojectjavafx.models.GenericPetition;
+import org.example.emailprojectjavafx.models.Patient.Patient;
+import org.example.emailprojectjavafx.models.Patient.PatientListResponse;
+import org.example.emailprojectjavafx.models.Record.Record;
+import org.example.emailprojectjavafx.models.Record.RecordListResponse;
+import org.example.emailprojectjavafx.utils.pdf.CreateTableInPdf;
+import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
+
+import static org.example.emailprojectjavafx.utils.Utils.showAlert;
 
 public class EmailSender {
 
@@ -137,5 +148,64 @@ public class EmailSender {
                 .send(userId, message).execute();
         System.out.println("Message id: " + message.getId());
         System.out.println("Email sent successfully.");
+    }
+
+    private static void onSend(Patient patient, List<Appointment> appointments) {
+        String gmail = "physiocare@gmail.com";
+        String subject = "Appointment Reminder";
+        String message = "Hello " + patient.getName() + "! We are contacting you from PhysioCare Physiotherapy Company to remind you " +
+                "that you have 2 appointments left to reach the maximum. Thank you. Kind regards, PhysioCare.";
+
+        if (patient.getEmail().isEmpty()) {
+            showAlert("ERROR", "The destination email is not provided.", 2);
+        } else {
+            try {
+                final NetHttpTransport HTTP_TRANSPORT =
+                        new com.google.api.client.http.javanet.NetHttpTransport();
+                Gmail service =
+                        new Gmail.Builder(HTTP_TRANSPORT, EmailSender.JSON_FACTORY,
+                                EmailSender.getCredentials(HTTP_TRANSPORT))
+                                .setApplicationName(EmailSender.APPLICATION_NAME)
+                                .build();
+
+                String destination = "EmailProjectJavaFX/src/main/resources/appointments/" + patient.getId() + ".pdf";
+                CreateTableInPdf.createTableInPdf(appointments, destination);
+
+                // Define the email parameters
+                String user = "me";
+                //MimeMessage emailContent = EmailSender.createEmail(destination, gmail, subject, message);
+                MimeMessage emailContent =
+                        EmailSender.createEmailWithAttachment(patient.getEmail(),
+                                gmail,
+                                subject,
+                                message,
+                                destination);
+
+                // Send the email
+                EmailSender.sendMessage(service, user, emailContent);
+                showAlert("SUCCESS", "Email sent.", 1);
+            } catch (Exception e) {
+                showAlert("ERROR", e.getMessage(), 2);
+            }
+        }
+    }
+
+    public static void sendAppointmentReminderMail(){
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "patients", "", "GET", null, PatientListResponse.class,
+                patientListResponse -> {
+                    patientListResponse.getPatients().forEach(p -> {
+                        ServiceUtils.makePetition(new GenericPetition<>(
+                                "records", p.getId() + "/patient", "GET", null, RecordListResponse.class,
+                                recordListResponse -> {
+                                    Record record = recordListResponse.getRecords().getFirst();
+                                    if(record.getAppointments().size() >= 8){
+                                        onSend(p, recordListResponse.getRecords().getFirst().getAppointments());
+                                    }
+                                }, "Failed to fetch records"
+                        ));
+                    });
+                }, "Failed to fetch patients"
+        ));
     }
 }

@@ -36,45 +36,7 @@ public class EmailSenderController {
         messageArea.setText("Mensaje de prueba");
     }
 
-    public void onSend() {
-        String gmail = gmailField.getText();
-        String password = passwordField.getText();
-        String destination = destinationField.getText();
-        String subject = subjectField.getText();
-        String message = messageArea.getText();
 
-        if (gmail.isEmpty() || password.isEmpty() || destination.isEmpty() || subject.isEmpty() || message.isEmpty()) {
-            showAlert("ERROR", "You have to fill all the fields to send a message.", 2);
-        } else {
-            try {
-                final NetHttpTransport HTTP_TRANSPORT =
-                        new com.google.api.client.http.javanet.NetHttpTransport();
-                Gmail service =
-                        new Gmail.Builder(HTTP_TRANSPORT, EmailSender.JSON_FACTORY,
-                                EmailSender.getCredentials(HTTP_TRANSPORT))
-                                .setApplicationName(EmailSender.APPLICATION_NAME)
-                                .build();
-
-                CreateTableInPdf.createTableInPdf();
-
-                // Define the email parameters
-                String user = "me";
-                //MimeMessage emailContent = EmailSender.createEmail(destination, gmail, subject, message);
-                MimeMessage emailContent =
-                        EmailSender.createEmailWithAttachment(destination,
-                                gmail,
-                                subject,
-                                message,
-                                "src/main/resources/tableExample.pdf");
-
-                // Send the email
-                EmailSender.sendMessage(service, user, emailContent);
-                showAlert("SUCCESS", "Email sent.", 1);
-            } catch (Exception e) {
-                showAlert("ERROR", e.getMessage(), 2);
-            }
-        }
-    }
 
     public void onBack(ActionEvent actionEvent) {
         Node source = (Node) actionEvent.getSource();

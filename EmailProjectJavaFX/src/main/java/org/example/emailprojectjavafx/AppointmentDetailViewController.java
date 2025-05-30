@@ -9,10 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
@@ -45,8 +42,11 @@ public class AppointmentDetailViewController implements Initializable {
     public TextArea txtObservations;
     @FXML
     public Label lblConfirmationStatus;
+    @FXML
+    public Spinner<Double> numPrice;
+
     private Appointment appointment;
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
     private Patient patient = null;
     private Physio physio = null;
 
@@ -67,11 +67,13 @@ public class AppointmentDetailViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if(appointment == null){
+            System.out.println("Nuevo appointment");
             appointment = new Appointment();
+        } else {
             fillData();
+            getPhysios();
         }
     }
-
 
     private void fillData(){
         if(appointment != null){
@@ -80,6 +82,7 @@ public class AppointmentDetailViewController implements Initializable {
             txtDiagnosis.setText(appointment.getDiagnosis());
             txtTreatment.setText(appointment.getTreatment());
             txtObservations.setText(appointment.getObservations());
+            numPrice.getEditor().setText(String.valueOf(appointment.getPrice()));
             if(appointment.getConfirmed() != null){
                 lblConfirmationStatus.setText(appointment.getConfirmed() ? "Appointment confirmed" :
                         "Pending verification");
@@ -105,13 +108,14 @@ public class AppointmentDetailViewController implements Initializable {
         Date date = toDate(dpDate.getEditor().getText());
         Boolean confirmed = lblConfirmationStatus.equals("Appointment confirmed");
         Physio physio = cbPhysio.getSelectionModel().getSelectedItem();
+        Double price = numPrice.getValue();
 
         if (diagnosis.isEmpty() || treatment.isEmpty() || observations.isEmpty() ||
-                Objects.requireNonNull(date).before(new Date())) {
+                price.isNaN() || Objects.requireNonNull(date).before(new Date())) {
             showAlert("Error", "Please fill all the fields correctly.", 2);
             return null;
         }
-        return new Appointment(date, physio.getId(), diagnosis, treatment, observations, confirmed);
+        return new Appointment(date, physio.getId(), diagnosis, treatment, observations, confirmed, price);
     }
 
     /**

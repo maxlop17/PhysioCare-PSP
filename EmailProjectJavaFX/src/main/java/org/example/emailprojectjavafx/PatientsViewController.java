@@ -12,17 +12,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
-import org.example.emailprojectjavafx.models.Appointment.Appointment;
-import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
 import org.example.emailprojectjavafx.models.GenericPetition;
-import org.example.emailprojectjavafx.models.Patient.Patient;
-import org.example.emailprojectjavafx.models.Patient.PatientListResponse;
-import org.example.emailprojectjavafx.models.Patient.PatientResponse;
-import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
+import org.example.emailprojectjavafx.models.Patient.*;
+import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
@@ -39,6 +33,8 @@ import static org.example.emailprojectjavafx.utils.Utils.switchView;
 public class PatientsViewController implements Initializable {
 
     @FXML
+    public PasswordField txtPassword;
+    @FXML
     private TextField txtName;
     @FXML
     private TextField txtSurname;
@@ -54,8 +50,6 @@ public class PatientsViewController implements Initializable {
     private ListView<Patient> lsPatients;
     @FXML
     private TextField txtLogin;
-    @FXML
-    private TextField txtPassword;
 
 
     Gson gson = new Gson();
@@ -76,6 +70,14 @@ public class PatientsViewController implements Initializable {
                                     .atZone(ZoneId.systemDefault())
                                     .toLocalDate();
                             dpBirthDate.setValue(localDate);
+                            ServiceUtils.makePetition(new GenericPetition<>(
+                                    "users", t2.getId(), "GET", null, UserResponse.class,
+                                    userResponse -> {
+                                        Platform.runLater(() -> {
+                                            txtLogin.setText(userResponse.getUser().getLogin());
+                                        });
+                                    }, "Failed to fetch user"
+                            ));
                         } else {
                             txtName.setText("");
                             txtSurname.setText("");
@@ -99,6 +101,7 @@ public class PatientsViewController implements Initializable {
                             controller.setPatient(lsPatients.getSelectionModel().getSelectedItem());
                             switchView((Node) mouseEvent.getSource(), root, "Patient | PhysioCare");
                         } catch (IOException e) {
+                            System.out.println(e.getMessage());
                             Utils.showAlert("Error", "Error getting the profile", 2);
                         }
                     }
@@ -165,12 +168,8 @@ public class PatientsViewController implements Initializable {
     /*-----------------------------------------------------------------------------------------*/
 
     private void postPatient(Patient patient) {
-        JsonObject patientJson = gson.toJsonTree(patient).getAsJsonObject();
-
-        patientJson.addProperty("login", txtLogin.getText());
-        patientJson.addProperty("password", txtPassword.getText());
-
-        String jsonRequest = gson.toJson(patientJson);
+        PatientRequest pr = new PatientRequest(patient, txtLogin.getText(), txtPassword.getText());
+        String jsonRequest = gson.toJson(pr);
 
         ServiceUtils.makePetition(new GenericPetition<>(
                 "patients", "", "POST", jsonRequest, PatientResponse.class,
@@ -185,12 +184,14 @@ public class PatientsViewController implements Initializable {
     }
 
     private void modifyPatient(Patient patient) {
-        String jsonRequest = gson.toJson(patient);
+        UpdatePatient up = new UpdatePatient(patient, txtLogin.getText(), txtPassword.getText());
+        String jsonRequest = gson.toJson(up);
 
         ServiceUtils.makePetition(new GenericPetition<>(
-                "patients", "", "PUT", jsonRequest, PatientResponse.class,
+                "patients", patient.getId(), "PUT", jsonRequest, PatientResponse.class,
                 patientResponse -> {
                     Platform.runLater(() -> {
+                        System.out.println("Patient updated." + patientResponse.getPatient());
                         showAlert("Updated patient", patientResponse.getPatient().getName() + " updated", 1);
                         getPatients();
                         clearFields();
@@ -236,9 +237,18 @@ public class PatientsViewController implements Initializable {
         String login = txtLogin.getText();
         String password = txtPassword.getText();
 
+        if(localDate.isAfter(LocalDate.now())){
+            showAlert("Error", "The date cannot be in the future.", 2);
+            return null;
+        }
         if (patientName.isEmpty() || surname.isEmpty() || address.isEmpty()
-                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null || login.isEmpty() || password.isEmpty()) {
+                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null ||
+                login.isEmpty() || password.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
+            return null;
+        }
+        if(!insuranceNumber.matches("^\\w{9}$")){
+            showAlert("Error", "The insurance number must have 9 characters.", 2);
             return null;
         }
         Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());

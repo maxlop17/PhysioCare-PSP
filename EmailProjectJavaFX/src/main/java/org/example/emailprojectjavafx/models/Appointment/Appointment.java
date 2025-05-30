@@ -15,15 +15,18 @@ public class Appointment {
     private String treatment;
     private String observations;
     private Boolean confirmed;
+    private Double price;
 
     public Appointment(){}
-    public Appointment(Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed) {
+    public Appointment(Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed,
+                       Double price) {
         this.date = date;
         this.physio = physio;
         this.diagnosis = diagnosis;
         this.treatment = treatment;
         this.observations = observations;
         this.confirmed = confirmed;
+        this.price = price;
     }
 
     public Appointment(String id, Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed) {
@@ -92,15 +95,28 @@ public class Appointment {
         this.confirmed = confirmed;
     }
 
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
-        return "Appointment{" +
-                "date=" + date +
-                ", physio='" + physio + '\'' +
-                ", diagnosis='" + diagnosis + '\'' +
-                ", treatment='" + treatment + '\'' +
-                ", observations='" + observations + '\'' +
-                '}';
+        return String.format(
+                "ID: %s | Date: %s | Physio: %s | Diagnosis: %s | Treatment: %s | Observations: %s | Confirmed: %s | Price: %.2f€",
+                id,
+                date,
+                physio,
+                diagnosis,
+                treatment,
+                observations,
+                confirmed ? "Yes" : "No",
+                price
+        );
     }
+
 }
 

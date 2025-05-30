@@ -15,9 +15,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.example.emailprojectjavafx.models.GenericPetition;
-import org.example.emailprojectjavafx.models.Physio.Physio;
-import org.example.emailprojectjavafx.models.Physio.PhysioListResponse;
-import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
+import org.example.emailprojectjavafx.models.Physio.*;
+import org.example.emailprojectjavafx.models.User.UserResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
@@ -40,8 +39,7 @@ public class PhysiosViewController implements Initializable {
     @FXML
     private TextField txtLogin;
     @FXML
-    private TextField txtPassword;
-
+    private PasswordField txtPassword;
 
     @FXML
     private ListView<Physio> lsPhysios;
@@ -70,6 +68,14 @@ public class PhysiosViewController implements Initializable {
                             txtLicenseNumber.setText(t2.getLicenseNumber());
                             txtEmail.setText(t2.getEmail());
                             cbSpecialization.setValue(t2.getSpecialty());
+                            ServiceUtils.makePetition(new GenericPetition<>(
+                                    "users", t2.getId(), "GET", null, UserResponse.class,
+                                    userResponse -> {
+                                        Platform.runLater(() -> {
+                                            txtLogin.setText(userResponse.getUser().getLogin());
+                                        });
+                                    }, "Failed to fetch user"
+                            ));
                         } else {
                             txtName.setText("");
                             txtSurname.setText("");
@@ -139,12 +145,8 @@ public class PhysiosViewController implements Initializable {
 
     private void postPhysio(Physio physio) {
         btnAdd.setDisable(true);
-        JsonObject physioJson = gson.toJsonTree(physio).getAsJsonObject();
-
-        physioJson.addProperty("login", txtLogin.getText());
-        physioJson.addProperty("password", txtPassword.getText());
-
-        String jsonRequest = gson.toJson(physioJson);
+        PhysioRequest pr = new PhysioRequest(physio, txtLogin.getText(), txtPassword.getText());
+        String jsonRequest = gson.toJson(pr);
 
         ServiceUtils.makePetition(new GenericPetition<>(
                 "physios", "",
@@ -162,7 +164,8 @@ public class PhysiosViewController implements Initializable {
 
     private void modifyPhysio(Physio physio) {
         btnUpdate.setDisable(true);
-        String jsonRequest = gson.toJson(physio);
+        UpdatePhysio up = new UpdatePhysio(physio, txtLogin.getText(), txtPassword.getText());
+        String jsonRequest = gson.toJson(up);
 
         ServiceUtils.makePetition(new GenericPetition<>(
                 "physios", physio.getId(),
@@ -212,13 +215,19 @@ public class PhysiosViewController implements Initializable {
         String surname = txtSurname.getText();
         String licenseNumber = txtLicenseNumber.getText();
         String email = txtEmail.getText();
-        String specialty = cbSpecialization.getValue().toLowerCase();
+        String specialty = cbSpecialization.getValue();
         String login = txtLogin.getText();
         String password = txtPassword.getText();
 
 
-        if (name.isEmpty() || surname.isEmpty() || licenseNumber.isEmpty() || email.isEmpty() || specialty.isEmpty()) {
+        if (name.isEmpty() || surname.isEmpty() || licenseNumber.isEmpty() || email.isEmpty()
+                || specialty == null || specialty.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
+            return null;
+        }
+
+        if(!licenseNumber.matches("^[a-zA-Z0-9]{8}$")){
+            showAlert("Error", "The license number must have 8 numbers and/or letters.", 2);
             return null;
         }
 
@@ -228,7 +237,7 @@ public class PhysiosViewController implements Initializable {
         }
 
 
-        return new Physio(name, surname, licenseNumber, specialty, email);
+        return new Physio(name, surname, licenseNumber, specialty.toLowerCase(), email);
     }
 
 
