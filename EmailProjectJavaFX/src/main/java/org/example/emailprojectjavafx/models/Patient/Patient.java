@@ -92,6 +92,9 @@ public class Patient {
         this.email = email;
     }
 
+
+
+
     @Override
     public String toString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

@@ -98,9 +98,10 @@ public class PhysioProfileViewController {
                 // Obtener el controlador y pasarle el objeto
                 AppointmentDetailViewController controller = loader.getController();
                 controller.setAppointment(selectedAppointment);
+                controller.setPhysio(currentPhysio);
 
                 Node source = (Node) mouseEvent.getSource();
-                String title =  "Appointment | PhysioCare";
+                String title = "Appointment | PhysioCare";
                 Utils.switchView(source, root, title);
             }
         }
@@ -112,6 +113,7 @@ public class PhysioProfileViewController {
                 "GET", null, AppointmentListResponse.class,
                 appointmentListResponse -> {
                     Platform.runLater(() -> {
+                        System.out.println("APPOINTMENTS: "+ appointmentListResponse.getAppointments());
                         lstAppointments.getItems().setAll(appointmentListResponse.getAppointments());
 
                         // Estilizado por estado de confirmación
@@ -138,25 +140,22 @@ public class PhysioProfileViewController {
     }
 
     private void modifyAppointment(Appointment appointment) {
-        getRecord(appointment.getId());
         ServiceUtils.makePetition(new GenericPetition<>(
-                "records", record.getId() + "/appointments/" + appointment.getId(),
-                "PUT", gson.toJson(appointment), AppointmentResponse.class,
-                appointmentListResponse -> {
-                    Platform.runLater(() ->
-                            showAlert("Appointment updated", appointmentListResponse.getError(), 1));
-                }, "Failed to fetch appointments"
-        ));
-    }
-
-    private void getRecord(String id){
-        ServiceUtils.makePetition(new GenericPetition<>(
-                "records", "/appointments/" + id + "/record",
+                "records", "/appointments/" + appointment.getId() + "/record",
                 "GET", null, RecordResponse.class,
                 recordResponse -> {
-                    record = recordResponse.getRecord();
+                    Record record = recordResponse.getRecord();
+                    ServiceUtils.makePetition(new GenericPetition<>(
+                            "records", record.getId() + "/appointments/" + appointment.getId(),
+                            "PUT", gson.toJson(appointment), AppointmentResponse.class,
+                            appointmentListResponse -> {
+                                Platform.runLater(() ->
+                                        showAlert("Appointment updated", appointmentListResponse.getError(), 1));
+                            }, "Failed to update appointment"
+                    ));
                 }, "Failed to fetch record"
         ));
     }
+
 
 }

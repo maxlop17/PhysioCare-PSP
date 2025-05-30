@@ -27,6 +27,7 @@ module org.example.emailprojectjavafx {
     exports org.example.emailprojectjavafx.utils.email;
     opens org.example.emailprojectjavafx.utils.email to javafx.fxml;
 
+
     opens org.example.emailprojectjavafx.models.Patient;
     opens org.example.emailprojectjavafx.models.Physio;
     opens org.example.emailprojectjavafx.models.Appointment;
@@ -35,6 +36,9 @@ module org.example.emailprojectjavafx {
     opens org.example.emailprojectjavafx.models.Auth to com.google.gson;
     opens org.example.emailprojectjavafx.models to com.google.gson;
     exports org.example.emailprojectjavafx.utils.services;
+    exports org.example.emailprojectjavafx.models.Appointment;
+    exports org.example.emailprojectjavafx.models.Patient;
+
     opens org.example.emailprojectjavafx.utils.services to javafx.fxml;
     opens org.example.emailprojectjavafx.models.User to com.google.gson;
 

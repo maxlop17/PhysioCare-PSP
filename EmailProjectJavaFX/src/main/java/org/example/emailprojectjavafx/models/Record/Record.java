@@ -11,15 +11,15 @@ public class Record {
     private String id;
     private String patient;
     private String medicalRecord;
-    private List<String> appointments;
+    private List<Appointment> appointments;
 
-    public Record(String patient, String medicalRecord, List<String> appointments) {
+    public Record(String patient, String medicalRecord, List<Appointment> appointments) {
         this.patient = patient;
         this.medicalRecord = medicalRecord;
         this.appointments = appointments;
     }
 
-    public Record(String id, String patient, String medicalRecord, List<String> appointments) {
+    public Record(String id, String patient, String medicalRecord, List<Appointment> appointments) {
         this.id = id;
         this.patient = patient;
         this.medicalRecord = medicalRecord;
@@ -50,11 +50,11 @@ public class Record {
         this.medicalRecord = medicalRecord;
     }
 
-    public List<String> getAppointments() {
+    public List<Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<String> appointments) {
+    public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
 

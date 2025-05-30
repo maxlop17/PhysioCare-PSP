@@ -52,10 +52,14 @@ public class ServiceUtils {
                     if (response.isOk()) {
                         petition.getOnSuccess().accept(response);
                     } else {
-                        showAlert("Error", response.getError(), 2);
+                        //showAlert("Error", response.getError(), 2);
+                        System.out.println("Error: " + response.getError());
+
                     }
-                }).exceptionally(_ -> {
-                    showAlert("Error", petition.getErrorMessage(), 2);
+                }).exceptionally(ex -> {
+                    System.out.println("Excepción en makePetition: " + ex.getMessage());
+                    ex.printStackTrace();
+                    //showAlert("Error", petition.getErrorMessage(), 2);
                     return null;
                 });
     }

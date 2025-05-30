@@ -8,19 +8,21 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" prefHeight="801.0" prefWidth="917.0" spacing="15.0" style="-fx-background-color: #f5f8fa;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.emailprojectjavafx.PatientProfileViewController">
+<VBox alignment="CENTER" prefHeight="801.0" prefWidth="917.0" spacing="15.0" style="-fx-background-color: #f5f8fa;"
+      xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.emailprojectjavafx.PatientProfileViewController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
     <children>
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="629.0" spacing="10.0">
             <children>
                 <Label text="PATIENT PROFILE" textFill="#2c3e50">
                     <font>
-                        <Font name="System Bold" size="28.0" />
+                        <Font name="System Bold" size="28.0"/>
                     </font>
                     <effect>
-                        <DropShadow color="#00000022" radius="2.0" />
+                        <DropShadow color="#00000022" radius="2.0"/>
                     </effect>
                 </Label>
             </children>
@@ -29,130 +31,151 @@
         <HBox spacing="10.0" VBox.vgrow="ALWAYS">
             <children>
                 <!-- Panel izquierdo - Información del fisioterapeuta -->
-                <VBox minWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                <VBox minWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 8;"
+                      HBox.hgrow="ALWAYS">
                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
                     </padding>
                     <effect>
-                        <DropShadow color="#00000033" radius="4.0" />
+                        <DropShadow color="#00000033" radius="4.0"/>
                     </effect>
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="15.0">
                             <!-- Imagen de perfil -->
                             <StackPane>
-                                <ImageView fx:id="imgProfile" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fx:id="imgProfile" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true"
+                                           preserveRatio="true">
                                     <image>
-                                        <Image url="@/images/user_placeholder.png" />
                                     </image>
                                     <effect>
-                                        <DropShadow color="#00000033" radius="5.0" />
+                                        <DropShadow color="#00000033" radius="5.0"/>
                                     </effect>
                                 </ImageView>
-                                <Circle fx:id="circleClip" radius="60.0" visible="false" />
+                                <Circle fx:id="circleClip" radius="60.0" visible="false"/>
                             </StackPane>
                             <VBox>
-                                <Label prefHeight="27.0" prefWidth="183.0" text="Patient Information" textFill="#3498db">
+                                <Label prefHeight="27.0" prefWidth="183.0" text="Patient Information"
+                                       textFill="#3498db">
                                     <font>
-                                        <Font name="System Bold" size="18.0" />
+                                        <Font name="System Bold" size="18.0"/>
                                     </font>
                                 </Label>
-                                <Button fx:id="btnChangePhoto" mnemonicParsing="false" onAction="#onChangePhotoClick" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;" text="Change Photo">
+                                <Button fx:id="btnChangePhoto" mnemonicParsing="false" onAction="#onChangePhotoClick"
+                                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;"
+                                        text="Change Photo">
                                     <font>
-                                        <Font size="12.0" />
+                                        <Font size="12.0"/>
                                     </font>
                                 </Button>
                             </VBox>
                         </HBox>
 
-                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                        <ScrollPane fitToWidth="true"
+                                    style="-fx-background-color: transparent; -fx-border-color: transparent;">
                             <content>
                                 <GridPane hgap="15.0" vgap="15.0">
                                     <columnConstraints>
-                                        <ColumnConstraints hgrow="NEVER" minWidth="120.0" />
-                                        <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
+                                        <ColumnConstraints hgrow="NEVER" minWidth="120.0"/>
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="200.0"/>
                                     </columnConstraints>
 
                                     <!-- Nombre -->
-                                    <Label style="-fx-font-weight: bold;" text="Name:" GridPane.columnIndex="0" />
-                                    <Label fx:id="lblName" text="[Name will appear here]" GridPane.columnIndex="1" />
+                                    <Label style="-fx-font-weight: bold;" text="Name:" GridPane.columnIndex="0"/>
+                                    <Label fx:id="lblName" text="[Name will appear here]" GridPane.columnIndex="1"/>
 
                                     <!-- Apellidos -->
-                                    <Label style="-fx-font-weight: bold;" text="Surname:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                    <Label fx:id="lblSurname" text="[Surname will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label style="-fx-font-weight: bold;" text="Surname:" GridPane.columnIndex="0"
+                                           GridPane.rowIndex="1"/>
+                                    <Label fx:id="lblSurname" text="[Surname will appear here]" GridPane.columnIndex="1"
+                                           GridPane.rowIndex="1"/>
 
                                     <!-- Especialización -->
-                                    <Label style="-fx-font-weight: bold;" text="Birthdate" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                    <Label fx:id="lblBirthdate" text="[Spe will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label style="-fx-font-weight: bold;" text="Birthdate" GridPane.columnIndex="0"
+                                           GridPane.rowIndex="2"/>
+                                    <Label fx:id="lblBirthdate" text="[Spe will appear here]" GridPane.columnIndex="1"
+                                           GridPane.rowIndex="2"/>
 
                                     <!-- Número de Licencia -->
-                                    <Label style="-fx-font-weight: bold;" text="Insurance Number:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                    <Label fx:id="lblInsurance" text="[License number will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label style="-fx-font-weight: bold;" text="Insurance Number:"
+                                           GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                    <Label fx:id="lblInsurance" text="[License number will appear here]"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
                                     <!-- Email -->
-                                    <Label style="-fx-font-weight: bold;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                                    <Label fx:id="lblEmail" text="[Email will appear here]" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Label style="-fx-font-weight: bold;" text="Email:" GridPane.columnIndex="0"
+                                           GridPane.rowIndex="4"/>
+                                    <Label fx:id="lblEmail" text="[Email will appear here]" GridPane.columnIndex="1"
+                                           GridPane.rowIndex="4"/>
                                     <Label text="Address:" GridPane.rowIndex="5">
                                         <font>
-                                            <Font name="System Bold" size="12.0" />
+                                            <Font name="System Bold" size="12.0"/>
                                         </font>
                                     </Label>
-                                    <Label fx:id="lblAddress" text="[Address will apear here]" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="lblAddress" text="[Address will apear here]" GridPane.columnIndex="1"
+                                           GridPane.rowIndex="5"/>
 
                                     <rowConstraints>
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0"/>
                                     </rowConstraints>
                                 </GridPane>
                             </content>
                         </ScrollPane>
                         <Label text="Medical Record" textFill="#3498db">
                             <font>
-                                <Font size="18.0" />
+                                <Font size="18.0"/>
                             </font>
                         </Label>
-                        <Label fx:id="lblRecord" text="Here goes the medical record" />
+                        <Label fx:id="lblRecord" text="Here goes the medical record"/>
                         <GridPane prefHeight="288.0" prefWidth="298.0">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="295.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="214.0" minWidth="10.0" prefWidth="143.66666666666663" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0"
+                                                   prefWidth="295.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="214.0" minWidth="10.0"
+                                                   prefWidth="143.66666666666663"/>
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                             </rowConstraints>
                             <children>
-                                <Button mnemonicParsing="false" onAction="#onAddAppointment" prefHeight="38.0" prefWidth="191.0" style="-fx-background-color: #94c973; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Add appointment" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <Button mnemonicParsing="false" onAction="#onAddAppointment" prefHeight="38.0"
+                                        prefWidth="191.0"
+                                        style="-fx-background-color: #94c973; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;"
+                                        text="Add appointment" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets></Button>
+                                        <Insets/>
+                                    </opaqueInsets>
+                                </Button>
                             </children>
                         </GridPane>
                     </children>
                 </VBox>
 
                 <!-- Panel derecho - Lista de appointments -->
-                <VBox minWidth="300.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                <VBox minWidth="300.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 8;"
+                      HBox.hgrow="ALWAYS">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
                     <effect>
-                        <DropShadow color="#00000033" radius="4.0" />
+                        <DropShadow color="#00000033" radius="4.0"/>
                     </effect>
                     <children>
                         <Label prefHeight="27.0" prefWidth="279.0" text="Appointments" textFill="#3498db">
                             <font>
-                                <Font name="System Bold" size="18.0" />
+                                <Font name="System Bold" size="18.0"/>
                             </font>
                         </Label>
-                        <ListView fx:id="lvAppointments" style="-fx-background-radius: 4;" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="lvAppointments" style="-fx-background-radius: 4;" VBox.vgrow="ALWAYS"/>
                         <HBox alignment="CENTER_RIGHT" spacing="10.0">
                             <padding>
-                                <Insets top="10.0" />
+                                <Insets top="10.0"/>
                             </padding>
                         </HBox>
                     </children>
@@ -163,12 +186,14 @@
             <children>
                 <HBox alignment="BOTTOM_RIGHT">
                     <children>
-                        <Button fx:id="btnBack" onAction="#onBackButtonClick" style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Back">
+                        <Button fx:id="btnBack" onAction="#onBackButtonClick"
+                                style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;"
+                                text="Back">
                             <font>
-                                <Font size="14.0" />
+                                <Font size="14.0"/>
                             </font>
                             <effect>
-                                <DropShadow color="#00000033" radius="3.0" />
+                                <DropShadow color="#00000033" radius="3.0"/>
                             </effect>
                         </Button>
                     </children>

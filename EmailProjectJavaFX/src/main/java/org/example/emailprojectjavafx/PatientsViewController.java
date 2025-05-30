@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.emailprojectjavafx.models.Appointment.Appointment;
@@ -93,13 +94,16 @@ public class PatientsViewController implements Initializable {
                 if (mouseEvent.getClickCount() == 2) {
                     if (lsPatients.getSelectionModel().getSelectedItem() != null) {
                         try {
+
                             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/patient-profile-view.fxml"));
                             Parent root = loader.load();
                             PatientProfileViewController controller = loader.getController();
                             controller.setPatient(lsPatients.getSelectionModel().getSelectedItem());
                             switchView((Node) mouseEvent.getSource(), root, "Patient | PhysioCare");
+
+
                         } catch (IOException e) {
-                            Utils.showAlert("Error", "Error getting the profile", 2);
+                            Utils.showAlert("Error", "Error getting the profile\n" + e.getMessage(), 2);
                         }
                     }
                 }
@@ -127,7 +131,7 @@ public class PatientsViewController implements Initializable {
         if (selectedPatient != null) {
             showAlert("Warning", "To add a new patient, please deselect the selected patient from the list or press the 'Clear Fields' button.", 2);
         } else {
-            Patient newPatient = getValidatedDataFromForm();
+            Patient newPatient = getValidatedDataFromForm(false);
             if (newPatient != null) {
                 postPatient(newPatient);
             }
@@ -139,7 +143,7 @@ public class PatientsViewController implements Initializable {
         if (selectedPatient == null) {
             showAlert("Error", "Select a patient to update.", 2);
         } else {
-            Patient updatedPatient = getValidatedDataFromForm();
+            Patient updatedPatient = getValidatedDataFromForm(true);
             if (updatedPatient != null) {
                 updatedPatient.setId(selectedPatient.getId());
                 modifyPatient(updatedPatient);
@@ -226,7 +230,7 @@ public class PatientsViewController implements Initializable {
         lsPatients.getSelectionModel().clearSelection();
     }
 
-    private Patient getValidatedDataFromForm() {
+    private Patient getValidatedDataFromForm(Boolean modify) {
         String patientName = txtName.getText();
         String surname = txtSurname.getText();
         String address = txtAddress.getText();
@@ -237,10 +241,16 @@ public class PatientsViewController implements Initializable {
         String password = txtPassword.getText();
 
         if (patientName.isEmpty() || surname.isEmpty() || address.isEmpty()
-                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null || login.isEmpty() || password.isEmpty()) {
+                || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null) {
             showAlert("Error", "Please fill all the fields.", 2);
             return null;
         }
+
+        if (!modify && (login.isEmpty() || password.isEmpty())) {
+            showAlert("Error", "Login and password are required for new physios.", 2);
+            return null;
+        }
+
         Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         return new Patient(patientName, surname, birthDate, address, insuranceNumber, email);

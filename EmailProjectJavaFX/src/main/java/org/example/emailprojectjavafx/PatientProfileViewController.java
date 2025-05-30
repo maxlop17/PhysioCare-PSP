@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -20,7 +21,6 @@ import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
 import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Patient.Patient;
-import org.example.emailprojectjavafx.models.Patient.PatientResponse;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
 import org.example.emailprojectjavafx.models.Record.Record;
@@ -63,11 +63,16 @@ public class PatientProfileViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //We set the image
+        Image image = new Image(getClass().getResource("/images/user_placeholder.png").toString());
+        imgProfile.setImage(image);
+
+
         //Configuration to change the window on double click to the appointment
         lvAppointments.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(mouseEvent.getClickCount() == 2){
+                if (mouseEvent.getClickCount() == 2) {
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
                         Parent root = loader.load();
@@ -105,8 +110,8 @@ public class PatientProfileViewController implements Initializable {
         });
     }
 
-    private void loadData(){
-        if(patient != null) {
+    private void loadData() {
+        if (patient != null) {
             lblName.setText(patient.getName());
             lblSurname.setText(patient.getSurname());
             lblBirthdate.setText(String.valueOf(patient.getBirthDate()));
@@ -117,36 +122,29 @@ public class PatientProfileViewController implements Initializable {
         }
     }
 
-    private void getAppointments(){
+    private void getAppointments() {
         ServiceUtils.makePetition(new GenericPetition<>(
-                "records", patient.getId( )+ "/patient", "GET", null, RecordListResponse.class,
+                "records", patient.getId() + "/patient", "GET", null, RecordListResponse.class,
                 recordListResponse -> {
                     Record record = recordListResponse.getRecords().getFirst();
-                    lblRecord.setText(record.getMedicalRecord());
-                    System.out.println(record.getAppointments());
-                    record.getAppointments().forEach(this::getAppointmentById);
+                    Platform.runLater(() -> {
+                        lblRecord.setText(record.getMedicalRecord());
+
+                        lvAppointments.getItems().setAll(record.getAppointments());
+                    });
                 }, "Failed to fetch appointments"
         ));
     }
 
-    private void getAppointmentById(String id){
-        ServiceUtils.makePetition(new GenericPetition<>(
-                "records", "/appointments/" + id, "GET", null, AppointmentResponse.class,
-                appointmentResponse -> {
-                    Platform.runLater(() -> {
-                        lvAppointments.getItems().add(appointmentResponse.getAppointment());
-                    });
-                }, "Failed to fetch appointment"
-        ));
-    }
 
-    public String getAppointmentText(Appointment appointment, Physio physio){
+
+    public String getAppointmentText(Appointment appointment, Physio physio) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         String confirmed = "Not specified";
-        if(appointment.getConfirmed() != null)
+        if (appointment.getConfirmed() != null)
             confirmed = appointment.getConfirmed() ? "Confirmed" : "Pending verification";
         return formatter.format(appointment.getDate()) + " | Physio: " + physio.getName() +
-        " " + physio.getSurname() + " | " + appointment.getDiagnosis() + " | " + confirmed;
+                " " + physio.getSurname() + " | " + appointment.getDiagnosis() + " | " + confirmed;
     }
 
     public void onBackButtonClick(ActionEvent actionEvent) {
@@ -156,14 +154,18 @@ public class PatientProfileViewController implements Initializable {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    public void onAddAppointment(MouseEvent mouseEvent) {
+    public void onAddAppointment(ActionEvent mouseEvent) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
         Parent root = null;
-        try{
+        try {
             root = loader.load();
-        }catch(IOException e){
+        } catch (IOException e) {
             showAlert("ERROR", e.getMessage(), 2);
+            e.printStackTrace();
+            return;
         }
+
+
 
         AppointmentDetailViewController controller = loader.getController();
         controller.setPatient(patient);

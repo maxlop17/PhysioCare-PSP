@@ -2,12 +2,13 @@ package org.example.emailprojectjavafx.models.Appointment;
 
 import org.example.emailprojectjavafx.models.BaseResponse;
 import org.example.emailprojectjavafx.models.Patient.Patient;
+import org.example.emailprojectjavafx.models.Record.Record;
 
 public class AppointmentResponse extends BaseResponse {
 
-    private Appointment resultado;
+    private Record resultado;
 
-    public Appointment getAppointment() {
+    public Record getResultado() {
         return resultado;
     }
 

@@ -3,6 +3,7 @@ package org.example.emailprojectjavafx.models.Appointment;
 import com.google.gson.annotations.SerializedName;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 
+import java.net.Inet4Address;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -15,18 +16,20 @@ public class Appointment {
     private String treatment;
     private String observations;
     private Boolean confirmed;
+    private Integer price;
 
     public Appointment(){}
-    public Appointment(Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed) {
+    public Appointment(Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed, Integer price) {
         this.date = date;
         this.physio = physio;
         this.diagnosis = diagnosis;
         this.treatment = treatment;
         this.observations = observations;
         this.confirmed = confirmed;
+        this.price = price;
     }
 
-    public Appointment(String id, Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed) {
+    public Appointment(String id, Date date, String physio, String diagnosis, String treatment, String observations, Boolean confirmed, Integer price) {
         this.id = id;
         this.date = date;
         this.physio = physio;
@@ -34,6 +37,7 @@ public class Appointment {
         this.treatment = treatment;
         this.observations = observations;
         this.confirmed = confirmed;
+        this.price = price;
     }
 
     public String getId() {
@@ -92,14 +96,25 @@ public class Appointment {
         this.confirmed = confirmed;
     }
 
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
         return "Appointment{" +
-                "date=" + date +
+                "id='" + id + '\'' +
+                ", date=" + date +
                 ", physio='" + physio + '\'' +
                 ", diagnosis='" + diagnosis + '\'' +
                 ", treatment='" + treatment + '\'' +
                 ", observations='" + observations + '\'' +
+                ", confirmed=" + confirmed +
+                ", price=" + price +
                 '}';
     }
 }
