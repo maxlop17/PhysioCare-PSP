@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.image.ImageView?>
 <StackPane style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);"
            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="org.example.emailprojectjavafx.LoginViewController">
@@ -27,11 +28,11 @@
                     <StackPane minHeight="70.0" minWidth="70.0"
                                style="-fx-background-color: #3498db; -fx-background-radius: 35;">
                         <children>
-                            <Label text="PC" textFill="WHITE">
-                                <font>
-                                    <Font name="System Bold" size="28.0"/>
-                                </font>
-                            </Label>
+                            <ImageView fx:id="imgLogo" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
+                                <effect>
+                                    <DropShadow color="#00000033" radius="5.0" />
+                                </effect>
+                            </ImageView>
                         </children>
                         <effect>
                             <DropShadow color="#00000044" radius="10.0" spread="0.05"/>

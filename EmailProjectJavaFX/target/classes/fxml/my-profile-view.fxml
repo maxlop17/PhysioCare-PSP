@@ -54,11 +54,6 @@
                                     </effect>
                                 </ImageView>
                             </StackPane>
-                            <Button fx:id="btnChangeAvatar" mnemonicParsing="false" onAction="#onChangeAvatarClick" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;" text="Change Avatar">
-                                <font>
-                                    <Font size="12.0" />
-                                </font>
-                            </Button>
                         </VBox>
 
                         <!-- Panel central con información de usuario -->
@@ -145,28 +140,6 @@
                 </VBox>
 
                 <Separator />
-
-                <!-- Sección inferior - Permisos según rol -->
-                <VBox spacing="15.0">
-                    <padding>
-                        <Insets top="20.0" />
-                    </padding>
-                    <Label text="Permissions" textFill="#3498db">
-                        <font>
-                            <Font name="System Bold" size="18.0" />
-                        </font>
-                    </Label>
-
-                    <FlowPane fx:id="permissionsContainer" hgap="10.0" vgap="10.0">
-                        <children>
-                            <!-- Aquí se insertarán dinámicamente los permisos según el rol -->
-                            <Label style="-fx-background-color: #ecf0f1; -fx-padding: 5 10; -fx-background-radius: 15;" text="View Users" />
-                            <Label style="-fx-background-color: #ecf0f1; -fx-padding: 5 10; -fx-background-radius: 15;" text="Manage Patients" />
-                            <Label style="-fx-background-color: #ecf0f1; -fx-padding: 5 10; -fx-background-radius: 15;" text="Send Emails" />
-                            <Label style="-fx-background-color: #ecf0f1; -fx-padding: 5 10; -fx-background-radius: 15;" text="Schedule Appointments" />
-                        </children>
-                    </FlowPane>
-                </VBox>
             </children>
         </VBox>
 

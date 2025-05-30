@@ -138,7 +138,14 @@ public class PhysioProfileViewController {
     }
 
     private void modifyAppointment(Appointment appointment) {
-        getRecord(appointment.getId());
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "records", "/appointments/" + appointment.getId() + "/record",
+                "GET", null, RecordResponse.class,
+                recordResponse -> {
+                    System.out.println(recordResponse.getRecord());
+                    record = recordResponse.getRecord();
+                }, "Failed to fetch record"
+        ));
         ServiceUtils.makePetition(new GenericPetition<>(
                 "records", record.getId() + "/appointments/" + appointment.getId(),
                 "PUT", gson.toJson(appointment), AppointmentResponse.class,
@@ -146,16 +153,6 @@ public class PhysioProfileViewController {
                     Platform.runLater(() ->
                             showAlert("Appointment updated", appointmentListResponse.getError(), 1));
                 }, "Failed to fetch appointments"
-        ));
-    }
-
-    private void getRecord(String id){
-        ServiceUtils.makePetition(new GenericPetition<>(
-                "records", "/appointments/" + id + "/record",
-                "GET", null, RecordResponse.class,
-                recordResponse -> {
-                    record = recordResponse.getRecord();
-                }, "Failed to fetch record"
         ));
     }
 

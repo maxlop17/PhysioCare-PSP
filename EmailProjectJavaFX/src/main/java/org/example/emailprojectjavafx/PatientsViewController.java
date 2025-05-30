@@ -130,7 +130,7 @@ public class PatientsViewController implements Initializable {
         if (selectedPatient != null) {
             showAlert("Warning", "To add a new patient, please deselect the selected patient from the list or press the 'Clear Fields' button.", 2);
         } else {
-            Patient newPatient = getValidatedDataFromForm();
+            Patient newPatient = getValidatedDataFromForm(false);
             if (newPatient != null) {
                 postPatient(newPatient);
             }
@@ -142,7 +142,7 @@ public class PatientsViewController implements Initializable {
         if (selectedPatient == null) {
             showAlert("Error", "Select a patient to update.", 2);
         } else {
-            Patient updatedPatient = getValidatedDataFromForm();
+            Patient updatedPatient = getValidatedDataFromForm(true);
             if (updatedPatient != null) {
                 updatedPatient.setId(selectedPatient.getId());
                 modifyPatient(updatedPatient);
@@ -227,7 +227,7 @@ public class PatientsViewController implements Initializable {
         lsPatients.getSelectionModel().clearSelection();
     }
 
-    private Patient getValidatedDataFromForm() {
+    private Patient getValidatedDataFromForm(Boolean edit) {
         String patientName = txtName.getText();
         String surname = txtSurname.getText();
         String address = txtAddress.getText();
@@ -243,9 +243,12 @@ public class PatientsViewController implements Initializable {
         }
         if (patientName.isEmpty() || surname.isEmpty() || address.isEmpty()
                 || insuranceNumber.isEmpty() || email.isEmpty() || localDate == null ||
-                login.isEmpty() || password.isEmpty()) {
+                login.isEmpty()) {
             showAlert("Error", "Please fill all the fields.", 2);
             return null;
+        }
+        if(!edit && password.isEmpty()){
+            showAlert("Error", "The password cannot be empty.", 2);
         }
         if(!insuranceNumber.matches("^\\w{9}$")){
             showAlert("Error", "The insurance number must have 9 characters.", 2);

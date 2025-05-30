@@ -31,7 +31,6 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 750, 650);
         stage.setTitle("PhysioCare");
         stage.setScene(scene);
-        stage.setFullScreen(true);
         stage.show();
     }
 

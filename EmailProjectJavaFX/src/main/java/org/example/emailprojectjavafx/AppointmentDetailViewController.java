@@ -49,6 +49,8 @@ public class AppointmentDetailViewController implements Initializable {
     private Gson gson = new Gson();
     private Patient patient = null;
     private Physio physio = null;
+    private static final String CONFIRMED = "Appointment confirmed";
+    private static final String PENDING = "Pending verification";
 
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
@@ -84,14 +86,15 @@ public class AppointmentDetailViewController implements Initializable {
             txtObservations.setText(appointment.getObservations());
             numPrice.getEditor().setText(String.valueOf(appointment.getPrice()));
             if(appointment.getConfirmed() != null){
-                lblConfirmationStatus.setText(appointment.getConfirmed() ? "Appointment confirmed" :
-                        "Pending verification");
+                lblConfirmationStatus.setText(appointment.getConfirmed() ? CONFIRMED :
+                        PENDING);
             }
             getPhysios();
         }
     }
 
     public void onToggleConfirmation(ActionEvent actionEvent) {
+        lblConfirmationStatus.setText(lblConfirmationStatus.getText().equals(CONFIRMED) ? CONFIRMED : PENDING);
     }
 
     public void onBackButtonClick(ActionEvent actionEvent) {
@@ -99,6 +102,7 @@ public class AppointmentDetailViewController implements Initializable {
     }
 
     public void onAddAppointment(ActionEvent actionEvent) {
+
     }
 
     private Appointment getValidatedDataFromForm() {

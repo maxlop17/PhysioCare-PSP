@@ -144,19 +144,17 @@ public class PhysiosViewController implements Initializable {
     /*----------------------------------------------------------------------------------------------*/
 
     private void postPhysio(Physio physio) {
-        btnAdd.setDisable(true);
         PhysioRequest pr = new PhysioRequest(physio, txtLogin.getText(), txtPassword.getText());
         String jsonRequest = gson.toJson(pr);
-
+        System.out.println(jsonRequest);
         ServiceUtils.makePetition(new GenericPetition<>(
-                "physios", "",
-                "POST", jsonRequest, PhysioResponse.class,
+                "physios", "", "POST", jsonRequest, PhysioResponse.class,
                 physioResponse -> {
+                    System.out.println(physioResponse.getPhysio());
                     Platform.runLater(() -> {
-                        showAlert("Physio added", physioResponse.getPhysio().getName() + " added", 1);
+                        showAlert("Physio added", "Physio added successfully", 1);
                         getPhysios();
                         clearFields();
-                        btnAdd.setDisable(false);
                     });
                 }, "Failed to add physio"
         ));
@@ -174,7 +172,6 @@ public class PhysiosViewController implements Initializable {
                     Platform.runLater(() -> {
                         showAlert("Physio updated", physioResponse.getPhysio().getName() + " updated", 1);
                         getPhysios();
-                        btnUpdate.setDisable(false);
                         clearFields();
                     });
                 }, "Failed to modifying physio"
