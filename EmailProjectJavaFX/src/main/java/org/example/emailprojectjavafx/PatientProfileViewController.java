@@ -200,22 +200,6 @@ public class PatientProfileViewController implements Initializable {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    public void onAddAppointment(MouseEvent mouseEvent) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
-        Parent root = null;
-        try{
-            root = loader.load();
-        }catch(IOException e){
-            showAlert("ERROR", e.getMessage(), 2);
-        }
-
-        AppointmentDetailViewController controller = loader.getController();
-        controller.setPatient(patient);
-
-        Node source = (Node) mouseEvent.getSource();
-        String title = "New Appointment| PhysioCare";
-        Utils.switchView(source, root, title);
-    }
 
     public void onChangePhotoClick(ActionEvent actionEvent) {
     }
@@ -239,4 +223,18 @@ public class PatientProfileViewController implements Initializable {
         }
     }
 
+    public void onAddAppointment(ActionEvent actionEvent) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
+        try{
+            Parent root = loader.load();
+            AppointmentDetailViewController controller = loader.getController();
+            controller.setPatient(patient);
+
+            Node source = (Node) actionEvent.getSource();
+            String title = "New Appointment | PhysioCare";
+            Utils.switchView(source, root, title);
+        }catch(IOException e){
+            showAlert("ERROR", e.getMessage(), 2);
+        }
+    }
 }

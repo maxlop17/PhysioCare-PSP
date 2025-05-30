@@ -151,7 +151,7 @@ public class EmailSender {
     }
 
     private static void onSend(Patient patient, List<Appointment> appointments) {
-        String gmail = "physiocare@gmail.com";
+        String gmail = "maximlopezlopez@gmail.com";
         String subject = "Appointment Reminder";
         String message = "Hello " + patient.getName() + "! We are contacting you from PhysioCare Physiotherapy Company to remind you " +
                 "that you have 2 appointments left to reach the maximum. Thank you. Kind regards, PhysioCare.";

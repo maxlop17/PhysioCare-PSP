@@ -98,6 +98,7 @@ public class PhysioProfileViewController {
                 // Obtener el controlador y pasarle el objeto
                 AppointmentDetailViewController controller = loader.getController();
                 controller.setAppointment(selectedAppointment);
+                controller.setPhysio(currentPhysio);
 
                 Node source = (Node) mouseEvent.getSource();
                 String title =  "Appointment | PhysioCare";
@@ -159,4 +160,18 @@ public class PhysioProfileViewController {
         ));
     }
 
+    public void onAddAppointment(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/appointment-detail-view.fxml"));
+            Parent root = loader.load();
+            AppointmentDetailViewController controller = loader.getController();
+            controller.setPhysio(currentPhysio);
+
+            Node source = (Node) actionEvent.getSource();
+            String title = "New Appointment | PhysioCare";
+            Utils.switchView(source, root, title);
+        } catch(Exception e){
+            Utils.showAlert("Error", "The appointment view cannot be loaded.", 2);
+        }
+    }
 }

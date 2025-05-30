@@ -38,7 +38,7 @@ public class MainApplication extends Application {
 
     public static void main(String[] args) {
         launch();
-        sendEmails();
+        //sendEmails();
     }
 
     private static void sendEmails(){

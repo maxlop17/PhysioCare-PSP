@@ -19,7 +19,7 @@ public class MedicalRecordPDF {
 
     private static void makeRecordPdf(String filename, Record record, Patient patient) {
         try {
-            PdfWriter writer = new PdfWriter("EmailProjectJavaFX/src/main/resources/records/" + filename + ".pdf");
+            PdfWriter writer = new PdfWriter("/records/" + filename + ".pdf");
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 

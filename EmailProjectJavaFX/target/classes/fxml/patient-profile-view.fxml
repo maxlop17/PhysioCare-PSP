@@ -53,11 +53,6 @@
                                         <Font name="System Bold" size="18.0" />
                                     </font>
                                 </Label>
-                                <Button fx:id="btnChangePhoto" mnemonicParsing="false" onAction="#onChangePhotoClick" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;" text="Change Photo">
-                                    <font>
-                                        <Font size="12.0" />
-                                    </font>
-                                </Button>
                             </VBox>
                         </HBox>
 

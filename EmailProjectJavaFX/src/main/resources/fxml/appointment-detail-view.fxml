@@ -34,7 +34,7 @@
             <children>
                 <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
                     <content>
-                        <GridPane hgap="15.0" style="-fx-padding: 10;" vgap="15.0">
+                        <GridPane fx:id="gridPane" hgap="15.0" style="-fx-padding: 10;" vgap="15.0">
                             <columnConstraints>
                                 <ColumnConstraints hgrow="NEVER" minWidth="120.0" prefWidth="120.0" />
                                 <ColumnConstraints hgrow="ALWAYS" minWidth="300.0" />
@@ -45,7 +45,7 @@
                             <DatePicker fx:id="dpDate" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                             <!-- Physio -->
-                            <Label style="-fx-font-weight: bold;" text="Physio:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <Label fx:id="lblPhysioPatient" style="-fx-font-weight: bold;" text="Physio:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                             <ComboBox fx:id="cbPhysio" prefWidth="300.0" promptText="Select physio" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
 
                             <!-- Diagnosis -->

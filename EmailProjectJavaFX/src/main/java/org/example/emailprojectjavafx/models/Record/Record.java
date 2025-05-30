@@ -61,7 +61,8 @@ public class Record {
     @Override
     public String toString() {
         return "Record{" +
-                "patient='" + patient + '\'' +
+                "id: " + id +
+                " patient='" + patient + '\'' +
                 ", medicalRecord='" + medicalRecord + '\'' +
                 ", appointments=" + appointments +
                 '}';

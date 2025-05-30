@@ -10,12 +10,17 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.example.emailprojectjavafx.models.Appointment.Appointment;
 import org.example.emailprojectjavafx.models.Appointment.AppointmentResponse;
+import org.example.emailprojectjavafx.models.Appointment.Appointment;
+import org.example.emailprojectjavafx.models.Record.Record;
+import org.example.emailprojectjavafx.models.GenericPetition;
 import org.example.emailprojectjavafx.models.Patient.Patient;
 import org.example.emailprojectjavafx.models.Physio.Physio;
 import org.example.emailprojectjavafx.models.Physio.PhysioListResponse;
+import org.example.emailprojectjavafx.models.Physio.PhysioResponse;
+import org.example.emailprojectjavafx.models.Record.RecordResponse;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 
@@ -43,12 +48,19 @@ public class AppointmentDetailViewController implements Initializable {
     @FXML
     public Label lblConfirmationStatus;
     @FXML
-    public Spinner<Double> numPrice;
+    public Spinner<Double> numPrice = new Spinner<>();
+    @FXML
+    public Label lblPhysioPatient;
+    @FXML
+    public GridPane gridPane;
 
     private Appointment appointment;
     private Gson gson = new Gson();
     private Patient patient = null;
     private Physio physio = null;
+    private Record record;
+    private static final String CONFIRMED = "Appointment confirmed";
+    private static final String PENDING = "Pending verification";
 
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
@@ -66,13 +78,13 @@ public class AppointmentDetailViewController implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        numPrice.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 1000.0, 0.0, 1.0));
         if(appointment == null){
-            System.out.println("Nuevo appointment");
             appointment = new Appointment();
         } else {
             fillData();
-            getPhysios();
         }
+        getPhysios();
     }
 
     private void fillData(){
@@ -82,16 +94,20 @@ public class AppointmentDetailViewController implements Initializable {
             txtDiagnosis.setText(appointment.getDiagnosis());
             txtTreatment.setText(appointment.getTreatment());
             txtObservations.setText(appointment.getObservations());
-            numPrice.getEditor().setText(String.valueOf(appointment.getPrice()));
-            if(appointment.getConfirmed() != null){
-                lblConfirmationStatus.setText(appointment.getConfirmed() ? "Appointment confirmed" :
-                        "Pending verification");
+            if(appointment.getPrice() != null) {
+                numPrice.getEditor().setText(String.valueOf(appointment.getPrice()));
+            } else {
+                numPrice.getEditor().setText("0");
             }
-            getPhysios();
+            if(appointment.getConfirmed() != null){
+                lblConfirmationStatus.setText(appointment.getConfirmed() ? CONFIRMED : PENDING);
+            }
+            getRecordByAppointmentId();
         }
     }
 
     public void onToggleConfirmation(ActionEvent actionEvent) {
+        lblConfirmationStatus.setText(lblConfirmationStatus.equals(CONFIRMED) ? PENDING : CONFIRMED);
     }
 
     public void onBackButtonClick(ActionEvent actionEvent) {
@@ -99,9 +115,24 @@ public class AppointmentDetailViewController implements Initializable {
     }
 
     public void onAddAppointment(ActionEvent actionEvent) {
+        if(appointment.getId() == null || appointment.getId().isEmpty()){
+            String jsonRequest = gson.toJson(getValidatedDataFromForm(false));
+            ServiceUtils.makePetition(new GenericPetition<>(
+                    "records", record.getId() + "/appointments",
+                    "POST", jsonRequest, RecordResponse.class,
+                    recordResponse -> {
+                        Platform.runLater(() -> {
+                            showAlert("Appointment created", "Appointment updated", 1);
+                        });
+                        onBackButtonClick(actionEvent);
+                    }, "Failed to create appointment"
+            ));
+        } else {
+            showAlert("Error", "The appointment already exists.", 2);
+        }
     }
 
-    private Appointment getValidatedDataFromForm() {
+    private Appointment getValidatedDataFromForm(Boolean update) {
         String diagnosis = txtDiagnosis.getText();
         String treatment = txtTreatment.getText();
         String observations = txtObservations.getText();
@@ -110,10 +141,14 @@ public class AppointmentDetailViewController implements Initializable {
         Physio physio = cbPhysio.getSelectionModel().getSelectedItem();
         Double price = numPrice.getValue();
 
-        if (diagnosis.isEmpty() || treatment.isEmpty() || observations.isEmpty() ||
-                price.isNaN() || Objects.requireNonNull(date).before(new Date())) {
+        if (diagnosis.isEmpty() || treatment.isEmpty() ||
+                price.isNaN() || Objects.requireNonNull(date).before(new Date()) ||
+                physio == null) {
             showAlert("Error", "Please fill all the fields correctly.", 2);
             return null;
+        }
+        if(update && observations.isEmpty()){
+            observations = appointment.getObservations();
         }
         return new Appointment(date, physio.getId(), diagnosis, treatment, observations, confirmed, price);
     }
@@ -135,50 +170,42 @@ public class AppointmentDetailViewController implements Initializable {
 
     public void onUpdateAppointment(ActionEvent actionEvent) {
         if(appointment.getId() != null) {
-            String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
-            String jsonRequest = gson.toJson(getValidatedDataFromForm());
-            ServiceUtils.getResponseAsync(url, jsonRequest, "PUT")
-                    .thenApply(json ->
-                            gson.fromJson(json, AppointmentResponse.class)
-                    ).thenAccept(response -> {
-                        if (response.isOk()) {
-                            Platform.runLater(() -> {
-                                showAlert("Updated appointment", "Appointment updated", 1);
-                            });
-                        } else {
-                            showAlert("Error", response.getError(), 2);
-                        }
-                    }).exceptionally(_ -> {
-                        showAlert("Error", "Failed to fetch appointments", 2);
-                        return null;
-                    });
+            String jsonRequest = gson.toJson(getValidatedDataFromForm(true));
+            ServiceUtils.makePetition(new GenericPetition<>(
+                    "records", record.getId() + "/appointments/" + appointment.getId(),
+                    "PUT", jsonRequest, RecordResponse.class,
+                    recordResponse -> {
+                        Platform.runLater(() -> {
+                            showAlert("Updated appointment", "Appointment updated", 1);
+                        });
+                    }, "Failed to fetch appointments"
+            ));
         } else {
             showAlert("ERROR", "There is no appointment to update", 2);
         }
     }
 
+    private void getRecordByAppointmentId(){
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "records", "appointments/" + appointment.getId() + "/record",
+                "GET", null, RecordResponse.class,
+                recordResponse -> {
+                    record = recordResponse.getRecord();
+                }, "Failed to fetch record"
+        ));
+    }
+
     public void onDeleteAppointment(ActionEvent actionEvent) {
         if(appointment.getId() != null) {
-            String url = ServiceUtils.SERVER + "/appointments/" + appointment.getId();
-            String jsonRequest = "";
-
-            ServiceUtils.getResponseAsync(url, jsonRequest, "DELETE")
-                    .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
-                    .thenAccept(response -> {
-                        if (response.isOk()) {
-                            Platform.runLater(() -> {
-                                showAlert("Deleted Appointment", response.getAppointment().getDiagnosis() +
-                                        " -  " + response.getAppointment().getDate() + " deleted", 1);
-                            });
-                            changeWindow(actionEvent);
-                        } else {
-                            Platform.runLater(() -> showAlert("Error deleting patient", response.getError(), 2));
-                        }
-                    })
-                    .exceptionally(_ -> {
-                        showAlert("Error", "Failed to delete patient", 2);
-                        return null;
-                    });
+            ServiceUtils.makePetition(new GenericPetition<>(
+                    "records", record.getId() + "/appointments/" + appointment.getId(),
+                    "DELETE", null, RecordResponse.class,
+                    recordResponse -> {
+                        Platform.runLater(() -> {
+                            showAlert("Deleted Appointment", "Appointment deleted successfully", 1);
+                        });
+                    }, "Failed to fetch appointments"
+            ));
         } else {
             showAlert("ERROR", "There is no appointment to delete", 2);
         }
@@ -209,29 +236,39 @@ public class AppointmentDetailViewController implements Initializable {
     }
 
     private void getPhysios(){
-        String url = ServiceUtils.SERVER + "/physios";
-        ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json ->
-                        gson.fromJson(json, PhysioListResponse.class)
-                ).thenAccept(response -> {
-                    if (response.isOk()) {
-                        Platform.runLater(() -> {
-                            cbPhysio.getItems().addAll(response.getPhysios());
-                            if(appointment.getPhysio() != null){
-                                for(Physio p : response.getPhysios()){
-                                    if(p.getId().equals(appointment.getPhysio())){
-                                        cbPhysio.getSelectionModel().select(p);
-                                    }
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "physios", "", "GET", null, PhysioListResponse.class,
+                physioListResponse -> {
+                    Platform.runLater(() -> {
+                        cbPhysio.getItems().addAll(physioListResponse.getPhysios());
+                        if(appointment.getPhysio() != null){
+                            for(Physio p : physioListResponse.getPhysios()){
+                                if(p.getId().equals(appointment.getPhysio())){
+                                    cbPhysio.getSelectionModel().select(p);
                                 }
                             }
-                        });
-                    } else {
-                        showAlert("Error", response.getError(), 2);
-                    }
-                }).exceptionally(_ -> {
-                    showAlert("Error", "Failed to fetch appointments", 2);
-                    return null;
-                });
+                        }
+                    });
+                }, "Failed to fetch physios"
+        ));
+    }
+
+    private void getPatients(){
+        ServiceUtils.makePetition(new GenericPetition<>(
+                "physios", "", "GET", null, PhysioListResponse.class,
+                physioListResponse -> {
+                    Platform.runLater(() -> {
+                        cbPhysio.getItems().addAll(physioListResponse.getPhysios());
+                        if(appointment.getPhysio() != null){
+                            for(Physio p : physioListResponse.getPhysios()){
+                                if(p.getId().equals(appointment.getPhysio())){
+                                    cbPhysio.getSelectionModel().select(p);
+                                }
+                            }
+                        }
+                    });
+                }, "Failed to fetch physios"
+        ));
     }
 
 }
