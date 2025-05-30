@@ -54,11 +54,6 @@
                                     </effect>
                                 </ImageView>
                             </StackPane>
-                            <Button fx:id="btnChangeAvatar" mnemonicParsing="false" onAction="#onChangeAvatarClick" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 4;" text="Change Avatar">
-                                <font>
-                                    <Font size="12.0" />
-                                </font>
-                            </Button>
                         </VBox>
 
                         <!-- Panel central con información de usuario -->

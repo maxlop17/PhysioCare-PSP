@@ -4,7 +4,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 import org.example.emailprojectjavafx.utils.Utils;
@@ -13,10 +16,12 @@ import org.example.emailprojectjavafx.utils.services.TokenUtils;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class LoginViewController {
+public class LoginViewController implements Initializable{
 
     @FXML
     public VBox vbox;
+    @FXML
+    public ImageView imgLogo;
     @FXML
     private TextField txtUsername;
     @FXML
@@ -44,4 +49,8 @@ public class LoginViewController {
         Utils.switchView(source, fxmlFile, title);
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        imgLogo.setImage(new Image(String.valueOf(getClass().getResource("/images/logo.png"))));
+    }
 }

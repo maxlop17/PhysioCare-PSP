@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.scene.image.ImageView?>
 <StackPane style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.emailprojectjavafx.FirstViewController">
     <children>
         <VBox alignment="CENTER" maxWidth="800.0" spacing="30.0">
@@ -19,11 +20,11 @@
                     <!-- Logo -->
                     <StackPane minHeight="70.0" minWidth="70.0" style="-fx-background-color: #3498db; -fx-background-radius: 35;">
                         <children>
-                            <Label text="PC" textFill="WHITE">
-                                <font>
-                                    <Font name="System Bold" size="28.0" />
-                                </font>
-                            </Label>
+                            <ImageView fx:id="imgAvatar" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
+                                <effect>
+                                    <DropShadow color="#00000033" radius="5.0" />
+                                </effect>
+                            </ImageView>
                         </children>
                         <effect>
                             <DropShadow color="#00000044" radius="10.0" spread="0.05" />
@@ -149,29 +150,6 @@
                                 </children>
                             </VBox>
 
-                            <!-- Botón para correo electrónico -->
-                            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10;">
-                                <padding>
-                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                </padding>
-                                <effect>
-                                    <DropShadow color="#00000011" radius="5.0" spread="0.05" />
-                                </effect>
-                                <children>
-
-                                    <Label text="Email Sender" textFill="#2c3e50">
-                                        <font>
-                                            <Font name="System Bold" size="16.0" />
-                                        </font>
-                                    </Label>
-
-                                    <Button fx:id="btnEmail" onAction="#openEmailAction" prefWidth="160.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Open">
-                                        <font>
-                                            <Font size="14.0" />
-                                        </font>
-                                    </Button>
-                                </children>
-                            </VBox>
                         </children>
                     </HBox>
                 </children>

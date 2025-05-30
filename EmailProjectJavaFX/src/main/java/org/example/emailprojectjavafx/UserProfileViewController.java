@@ -78,14 +78,6 @@ public class UserProfileViewController implements Initializable {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    public void onChangeAvatarClick(ActionEvent actionEvent) {
-        FileChooser file = new FileChooser();
-        file.setTitle("Choose Avatar");
-        file.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG", "*.png", "*.jpg", "*.jpeg"));
-        File selectedFile = file.showOpenDialog(((Node) actionEvent.getSource()).getScene().getWindow());
-        //update(selectedFile);
-    }
-
     public void onChangePasswordAction(ActionEvent actionEvent) {
         update(txtPassword.getText());
     }

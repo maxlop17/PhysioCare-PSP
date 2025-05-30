@@ -1,13 +1,23 @@
 package org.example.emailprojectjavafx;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.example.emailprojectjavafx.utils.Utils;
 import org.example.emailprojectjavafx.utils.email.EmailSenderController;
 import org.example.emailprojectjavafx.utils.services.ServiceUtils;
 import org.example.emailprojectjavafx.utils.services.TokenUtils;
 
-public class FirstViewController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class FirstViewController implements Initializable {
+
+    @FXML
+    public ImageView imgAvatar;
 
     public void openPatientsAction(ActionEvent actionEvent) {
         Node source = (Node) actionEvent.getSource();
@@ -46,7 +56,8 @@ public class FirstViewController {
         Utils.switchView(source, fxmlFile, title);
     }
 
-    public void uploadRecordsFTP(){
-
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        imgAvatar.setImage(new Image(String.valueOf(getClass().getResource("/images/logo.png"))));
     }
 }
